@@ -18,10 +18,15 @@ import vista.VentanaPrincipal;
 import vista.VentanaReporteListaAlumnos;
 import vista.VentanaReportePlanillasParciales;
 import vista.VentanaReportes;
-
+/**
+ * Sistema de Gestión académica de alumnos
+ * modificado para n correlativas y 3 turnos
+ * 
+ * @author ASI
+ *
+ */
 public class Principal {
 
-	//comentario
 	VentanaPrincipal miVentanaPrincipal;
 	VentanaAlumno miVentanaAlumno;
 	VentanaAlumnoBuscar miVentanaAlumnoBuscar;
