@@ -103,7 +103,7 @@ public class VentanaMesaBuscar extends JFrame {
 		modeloMesa.addColumn("Situación");
 		modeloMesa.addColumn("CodigoMesa");
 		modeloMesa.addColumn("Estado");
-		modeloMesa.addColumn("turno");
+		modeloMesa.addColumn("Turno");
 		
 		//tablaMesa.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		//tablaMesa.getTableHeader().setReorderingAllowed(false);
@@ -160,7 +160,7 @@ public class VentanaMesaBuscar extends JFrame {
 		miMesaVO.setMesafolio(Integer.valueOf(tablaMesa.getValueAt(row, 4).toString()));
 		miMesaVO.setMesasituacion(tablaMesa.getValueAt(row, 5).toString());
 		miMesaVO.setCodmesa(Integer.valueOf(tablaMesa.getValueAt(row, 6).toString()));
-		miMesaVO.setTurno(tablaMesa.getValueAt(row, 7).toString());
+		miMesaVO.setTurno(tablaMesa.getValueAt(row, 8).toString());
 		return miMesaVO;
 	}
 

@@ -489,6 +489,14 @@ public class VentanaAlumnoMesa extends JFrame {
 		txtFecha.setText(miMesaVO.getMesafecha());		
 		txtSituacion.setText(miMesaVO.getMesasituacion());
 		codMesa=miMesaVO.getCodmesa();
+		
+		if (miMesaVO.getTurno().equals("TM"))
+			txtTurno.setText("Mañana");
+		if (miMesaVO.getTurno().equals("TT"))
+			txtTurno.setText("Tarde");
+		if (miMesaVO.getTurno().equals("TV"))
+			txtTurno.setText("Vespertino");
+		
 		listarAlumnos(miMesaVO);
 		
 	}

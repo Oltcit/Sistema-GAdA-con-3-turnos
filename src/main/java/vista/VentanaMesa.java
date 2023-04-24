@@ -294,7 +294,7 @@ public class VentanaMesa extends JFrame {
 	 */
 	protected void modificarMesa() {
 		accion=2;
-		habilita(false, true, false, true, true, true,false, true, false, false, false, true, true);	
+		habilita(false, true, false, true, true, true,false,true,true,true, true, false, false, false, true, true);	
 	}
 	/**
 	 * Registra una mesa
@@ -313,6 +313,7 @@ public class VentanaMesa extends JFrame {
 				miMesa.setMesalibro(Integer.valueOf(txtNumLibro.getText()));
 			else
 				miMesa.setMesalibro(0);
+			
 			if (!txtNumFolio.getText().isEmpty())
 				miMesa.setMesafolio(Integer.valueOf(txtNumFolio.getText()));
 			else
@@ -352,7 +353,8 @@ public class VentanaMesa extends JFrame {
 		CalculaAi cai = new CalculaAi();
 		numAi = cai.calculaIdMesa();
 		accion=1;
-		habilita(true, true, true, true, true, true, true,true, false, false, false, true,
+		rbTm.setSelected(true);
+		habilita(true, true, true, true, true, true,true,true,true, true,true, false, false, false, true,
 				true);		
 	}
 	/**
@@ -379,8 +381,11 @@ public class VentanaMesa extends JFrame {
 		txtNumLibro.setText("");
 		txtNumFolio.setText("");
 		cbSituacion.setSelectedIndex(0);
+		rbTm.setSelected(false);
+		rbTt.setSelected(false);
+		rbTv.setSelected(false);
 
-			habilita(true, false, false, false, false, false, true, false, true, false,false, true, true);
+			habilita(true, false, false, false, false, false, true, false,false,false,false, true, false,false, true, true);
 			
 		}
 	/**
@@ -412,7 +417,14 @@ public class VentanaMesa extends JFrame {
 		
 		codigoDeMesa=miMesaVO.getCodmesa();
 		
-		habilita(false,false, false, false, false, false, false, false, false,true,true,true,true);
+		if (miMesaVO.getTurno().equals("TM"))
+			rbTm.setSelected(true);
+		if (miMesaVO.getTurno().equals("TT"))
+			rbTt.setSelected(true);
+		if (miMesaVO.getTurno().equals("TV"))
+			rbTv.setSelected(true);
+		
+		habilita(false,false, false, false, false, false,false,false,false, false, false, false,true,true,true,true);
 	}
 	/**
 	 * Habilita botones y campos de la VentanaMesa
@@ -431,14 +443,18 @@ public class VentanaMesa extends JFrame {
 	 * @param bCancelar
 	 */
 	public void habilita(boolean cod, boolean fecha, boolean llama, boolean libro, boolean folio, boolean situa,
-			boolean bBuscarxCod, boolean bGuardar,boolean bAgregar, boolean bModificar, boolean bEliminar,
-			boolean bBuscar, boolean bCancelar) {
+			boolean bBuscarxCod, boolean tm , boolean tt, boolean tv, boolean bGuardar,boolean bAgregar, boolean bModificar, 
+			boolean bEliminar, boolean bBuscar, boolean bCancelar) {
+		
 		cbMaterias.setEnabled(cod);
 		selectorFecha.setEnabled(fecha);
 		cbLlamado.setEnabled(llama);
 		txtNumLibro.setEditable(libro);
 		txtNumFolio.setEditable(folio);
 		cbSituacion.setEnabled(situa);
+		rbTm.setEnabled(tm);
+		rbTt.setEnabled(tm);
+		rbTv.setEnabled(tv);
 		
 		btnBuscarXCodigo.setEnabled(bBuscarxCod);
 		btnGuardar.setVisible(bGuardar);
