@@ -162,7 +162,7 @@ public class Coordinador {
 		this.miVentanaMesaBuscar = miVentanaMesaBuscar;
 	}
 	
-	//Mostrar ventanas
+	//Mostrar ventanas 
 	
 	public void mostrarVentanaAlumno() {
 		miVentanaAlumno.setVisible(true);
@@ -232,7 +232,7 @@ public class Coordinador {
 		miVentanaMateriaNueva.setVisible(true);
 		miVentanaMateriaNueva.mostrarListadoDeMaterias(codMat, nomMat, anio, plan, ven);
 	}
-//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////fin
 	
 
 	
