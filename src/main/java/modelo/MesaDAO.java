@@ -87,7 +87,14 @@ public class MesaDAO {
 		}
 		finally {
 			if (existe){
-				JOptionPane.showMessageDialog(null, "No se Registro, esa mesa ya existe en fecha "+mfecha);
+				int respuesta=JOptionPane.showConfirmDialog(null, "Ya existe una mesa en esa fecha, desea crear otra?", "Confirmación", JOptionPane.YES_NO_OPTION);
+				
+				if (respuesta == JOptionPane.YES_NO_OPTION)
+				{
+					registrarMesa(miMesa);
+				
+				}
+				//JOptionPane.showMessageDialog(null, "No se Registro, esa mesa ya existe en fecha "+mfecha);
 			}
 			else{
 				registrarMesa(miMesa);
@@ -129,13 +136,13 @@ public class MesaDAO {
 		try{
 			Statement estatuto2 = conex.getConnection().createStatement();
 			ResultSet res2 = estatuto2.executeQuery("SELECT codmat,mesafecha,mesallamado,mesalibro,mesafolio,mesasituacion,codmesa,"
-					+ "mesaarmada from mesa order by mesafecha desc");
+					+ "mesaarmada,turno from mesa order by mesafecha desc");
 			
 			while (res2.next()){
 				//crea un vector de objetos para guardar los datos del ResultSet y luego poner en el JTable
-				Object fila[]= new Object[8];
+				Object fila[]= new Object[9];
 				//llena cada columna de la fila
-				for (int i=0; i<8;i++)
+				for (int i=0; i<9;i++)
 					fila[i]=res2.getObject(i+1);
 				//ahora carga la fila a la tabla modelo
 				modeloMesa.addRow(fila);
@@ -155,15 +162,15 @@ public class MesaDAO {
 	public void buscarMesasMateria(DefaultTableModel modeloMesa, String codMat) {
 			Conexion conex = new Conexion();
 			try{
-				String consulta = "SELECT codmat,mesafecha,mesallamado,mesalibro,mesafolio,mesasituacion,codmesa,"
-						+ "mesaarmada from mesa where codmat= ? order by mesafecha desc";
+				String consulta = "SELECT codmat,mesafecha,mesallamado,mesalibro,mesafolio,mesasituacion, codmesa,"
+						+ "mesaarmada, turno from mesa where codmat= ? order by mesafecha desc";
 				PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
 				estatuto.setString(1,codMat);
 				ResultSet res = estatuto.executeQuery();
 						
 				while (res.next()){
-					Object fila[]= new Object[8];
-					for (int i=0; i<8;i++)
+					Object fila[]= new Object[9];
+					for (int i=0; i<9;i++)
 						fila[i]=res.getObject(i+1);
 					modeloMesa.addRow(fila);
 				}
@@ -182,8 +189,8 @@ public class MesaDAO {
 	public void buscarMesasNuevasMateria(DefaultTableModel modeloMesa, String codMat) {
 			Conexion conex = new Conexion();
 			try{
-				String consulta = "SELECT codmat,mesafecha,mesallamado,mesalibro,mesafolio,mesasituacion,turno,codmesa,"
-						+ " mesaarmada from mesa where codmat= ? and mesaarmada='abierta' order by mesafecha desc";
+				String consulta = "SELECT codmat,mesafecha,mesallamado,mesalibro,mesafolio,mesasituacion,codmesa,"
+						+ " mesaarmada,turno from mesa where codmat= ? and mesaarmada='abierta' order by mesafecha desc";
 				PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
 				estatuto.setString(1,codMat);
 				ResultSet res = estatuto.executeQuery();
@@ -212,14 +219,14 @@ public class MesaDAO {
 		Conexion conex = new Conexion();
 		try{
 			String consulta = "SELECT codmat,mesafecha,mesallamado,mesalibro,mesafolio,mesasituacion,codmesa,"
-					+ " mesaarmada from mesa where codmat= ? and mesaarmada='cerrada' order by mesafecha desc";
+					+ " mesaarmada, turno from mesa where codmat= ? and mesaarmada='cerrada' order by mesafecha desc";
 			PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
 			estatuto.setString(1,codMat);
 			ResultSet res = estatuto.executeQuery();
 					
 			while (res.next()){
-				Object fila[]= new Object[8];
-				for (int i=0; i<8;i++)
+				Object fila[]= new Object[9];
+				for (int i=0; i<9;i++)
 					fila[i]=res.getObject(i+1);
 				modeloMesa.addRow(fila);
 			}
@@ -241,15 +248,15 @@ public class MesaDAO {
 		Conexion conex = new Conexion();
 		try{
 			String consulta = "SELECT codmat,mesafecha,mesallamado,mesalibro,mesafolio,mesasituacion,codmesa,"
-					+ " mesaarmada from mesa where codmat= ? and mesaarmada='cerrada' and mesalibro=0 "
+					+ " mesaarmada, turno from mesa where codmat= ? and mesaarmada='cerrada' and mesalibro=0 "
 					+ "and mesafolio=0 order by mesafecha desc";
 			PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
 			estatuto.setString(1,codMat);
 			ResultSet res = estatuto.executeQuery();
 					
 			while (res.next()){
-				Object fila[]= new Object[8];
-				for (int i=0; i<8;i++)
+				Object fila[]= new Object[9];
+				for (int i=0; i<9;i++)
 					fila[i]=res.getObject(i+1);
 				modeloMesa.addRow(fila);
 			}

@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListaAlumnos" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="eed5e3ee-dbd3-4cd4-8bb4-b5bd4b2d6f5e">
-	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapMesaExamen"/>
+	<property name="com.jaspersoft.studio.data.sql.tables">
+		<![CDATA[bWVzYWV4YW1lbi5hbHVtbm8gLDE2NCwxNTYsNjhlYjNjNWUtNTRjYi00YjAzLWI4YjMtYTU0YWZl
+ODMzYzZkO21lc2FleGFtZW4uYWx1bW5vbWF0ZXJpYSAsMTUsNzIsZTE2MmI0ZmQtZjQ5MC00MWVi
+LTkzMGItMjEwMGU4MGM3NTlhO21lc2FleGFtZW4ubWF0ZXJpYSAsMTY0LDE1LDg3ZmU5Mjc1LTJi
+ODUtNGIwZi04OTQ0LWYwMjQ4NzIwMmVlZTs=]]>
+	</property>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapBaseGada"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -43,20 +48,20 @@
 	</style>
 	<subDataset name="Dataset1" uuid="53b09565-7522-4332-9292-fb3e4aaf99bb">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapMesaExamen"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapBaseGada"/>
 		<parameter name="ParamAnioCursada" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[$P{ParamAnioCursada}]]></defaultValueExpression>
 		</parameter>
 		<parameter name="ParamCodMat" class="java.lang.String"/>
 		<parameter name="ParamTablaCodMat" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT mesaexamen.alumno.alapynom
-FROM mesaexamen.alumnomateria
-	INNER JOIN mesaexamen.alumno ON 
-	 mesaexamen.alumnomateria.aldni2 = mesaexamen.alumno.aldni
-	 where mesaexamen.alumnomateria.codmat2= $P{ParamCodMat} 
-	 and mesaexamen.alumnomateria.fechadecursada=$P{ParamAnioCursada}
-ORDER BY mesaexamen.alumno.alapynom]]>
+			<![CDATA[SELECT basegada.alumno.alapynom
+FROM  basegada.alumnomateria
+	INNER JOIN  basegada.alumno ON 
+	  basegada.alumnomateria.aldni2 =  basegada.alumno.aldni
+	 where  basegada.alumnomateria.codmat2= $P{ParamCodMat} 
+	 and  basegada.alumnomateria.fechadecursada=$P{ParamAnioCursada}
+ORDER BY  basegada.alumno.alapynom]]>
 		</queryString>
 		<field name="alapynom" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="alapynom"/>
@@ -66,21 +71,21 @@ ORDER BY mesaexamen.alumno.alapynom]]>
 	<parameter name="ParamAnioCursada" class="java.lang.Integer"/>
 	<parameter name="ParamCodMat" class="java.lang.String"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT mesaexamen.materia.codmat,
-	mesaexamen.materia.matnom,
-	mesaexamen.materia.anio,
-	mesaexamen.alumnomateria.fechadecursada
-FROM mesaexamen.alumnomateria
-	INNER JOIN mesaexamen.materia ON 
-	 mesaexamen.alumnomateria.codmat2 = mesaexamen.materia.codmat 
-	INNER JOIN mesaexamen.alumno ON 
-	 mesaexamen.alumnomateria.aldni2 = mesaexamen.alumno.aldni 
+		<![CDATA[SELECT basegada.materia.codmat,
+	basegada.materia.matnom,
+	basegada.materia.anio,
+	basegada.alumnomateria.fechadecursada
+FROM basegada.alumnomateria
+	INNER JOIN basegada.materia ON 
+	 basegada.alumnomateria.codmat2 = basegada.materia.codmat 
+	INNER JOIN basegada.alumno ON 
+	 basegada.alumnomateria.aldni2 = basegada.alumno.aldni 
 WHERE 
-	 mesaexamen.alumnomateria.fechadecursada = $P{ParamAnioCursada} 
-	 and mesaexamen.alumnomateria.codmat2= $P{ParamCodMat}
-GROUP BY mesaexamen.materia.matnom
-ORDER BY mesaexamen.materia.anio DESC,
-	mesaexamen.materia.matnom DESC]]>
+	 basegada.alumnomateria.fechadecursada = $P{ParamAnioCursada} 
+	 AND basegada.alumnomateria.codmat2 = $P{ParamCodMat} 
+GROUP BY basegada.materia.matnom
+ORDER BY basegada.materia.anio DESC,
+	basegada.materia.matnom DESC]]>
 	</queryString>
 	<field name="codmat" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="codmat"/>

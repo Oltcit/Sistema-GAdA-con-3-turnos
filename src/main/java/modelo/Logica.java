@@ -201,8 +201,15 @@ public class Logica {
 			String anio=fecha.substring(0,4);
 			if (mes==2 || mes==3 || mes==7 || mes==8 || mes==11 || mes==12)
 				miMesaDAO.validarRegistrarMesa(miMesa,anio,mes);
-			else
-				JOptionPane.showMessageDialog(null,"Se ingresó un mes equivocado","Error",JOptionPane.ERROR_MESSAGE);
+			else {
+				int respuesta=JOptionPane.showConfirmDialog(null, "Esta creando una mesa en un mes irregular, está seguro?", "Confirmación", JOptionPane.YES_NO_OPTION);
+							
+			if (respuesta == JOptionPane.YES_NO_OPTION)
+			{
+				miMesaDAO.validarRegistrarMesa(miMesa,anio,mes);
+			
+			}
+			}		//JOptionPane.showMessageDialog(null,"Se ingresó un mes equivocado","Error",JOptionPane.ERROR_MESSAGE);
 	}
 
 	public void validarModificacionMesa(MesaVO miMesa) {
@@ -212,8 +219,16 @@ public class Logica {
 		String anio=fecha.substring(0,4);
 		if (mes==2 || mes==3 || mes==8 || mes==11 || mes==12)
 			miMesaDAO.modificarMesa(miMesa);
-		else
-			JOptionPane.showMessageDialog(null,"Se ingresó un mes equivocado","Error",JOptionPane.ERROR_MESSAGE);
+		else {
+			int respuesta=JOptionPane.showConfirmDialog(null, "Esta asignando una mesa en un mes irregular, está seguro?", "Confirmación", JOptionPane.YES_NO_OPTION);
+			
+			if (respuesta == JOptionPane.YES_NO_OPTION)
+			{
+				miMesaDAO.validarRegistrarMesa(miMesa,anio,mes);
+			
+			}
+		}
+			//JOptionPane.showMessageDialog(null,"Se ingresó un mes equivocado","Error",JOptionPane.ERROR_MESSAGE);
 	}
 
 	

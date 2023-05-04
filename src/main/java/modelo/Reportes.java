@@ -24,11 +24,9 @@ public class Reportes {
 	private JasperViewer viewer;
 	private Coordinador miCoordinador;
 	
-	private String rutaReporte= "D:\\Colegios 2021\\Investigación Operativa\\Sistema GAdA\\Sistema GAdA v1.4"
-			+ "\\src\\main\\java\\Reportes\\";
-	//private String rutaReporte= "D:\\eclipse Mars win32\\Prácticas\\Base de Datos\\pruebaMesaExamen"
-		//	+ "\\src\\main\\java\\Reportes\\";
-	
+	private String rutaReporte= "C:\\Colegios 2022\\Algoritmos III\\Sistema GAdA GitHub\\Repo Git\\Sistema GAdA v1.4"
+			+ " con 3 turnos\\src\\main\\java\\reportes\\";
+	//C:\Colegios 2022\Algoritmos III\Sistema GAdA GitHub\Repo Git\Sistema GAdA v1.4 con 3 turnos\src\main\java\reportes
 	public void createReport(String loc){
 		Conexion conex= new Conexion();
 		Connection con;
