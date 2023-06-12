@@ -252,6 +252,7 @@ public class VentanaMateriaNueva extends JFrame {
 				MateriaCorrelativaVO miMateriaCorrelativaVO = new MateriaCorrelativaVO();
 				miMateriaCorrelativaVO.setCodCorrelativa(codCorr);
 				miMateriaCorrelativaVO.setCodMateria(codMat);
+				System.out.println("codigo de materia de primero:"+codMat+"zzz");
 				cantMat--;
 				// creo el objeto DAO para dar el alta en la base de datos
 				MateriaCorrelativaDAO miMateriaCorrelativaDAO=new MateriaCorrelativaDAO();

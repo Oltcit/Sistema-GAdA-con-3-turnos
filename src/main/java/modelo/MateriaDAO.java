@@ -171,12 +171,12 @@ public class MateriaDAO {
 		
 	}
 
-	public void buscarMaterias(DefaultTableModel modeloMateria) {
+	public void buscarMaterias(DefaultTableModel modeloMateria, String plan) {
 		Conexion conex = new Conexion();
 		try{
 			Statement estatutoMat = conex.getConnection().createStatement();
 			ResultSet resMat = estatutoMat.executeQuery("SELECT codmat,matnom,anio,plan,"
-					+ "modulos from materia order by anio");
+					+ "modulos from materia where plan='"+plan+"' order by anio");
 			
 			while (resMat.next()){
 				//crea un vector de objetos para guardar los datos del ResultSet y luego poner en el JTable
@@ -293,12 +293,13 @@ public class MateriaDAO {
 		}
 		
 	}
-	public void buscarParcialMateriaCodigo(DefaultTableModel modeloMateria, String codMat) {
+	public void buscarParcialMateriaCodigo(DefaultTableModel modeloMateria, String codMat, String plan) {
 		Conexion conex = new Conexion();
 		try{
-			String consulta = "SELECT * FROM materia where codmat like ? order by codmat";
+			String consulta = "SELECT * FROM materia where codmat like ? and plan=? order by codmat";
 			PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
 			estatuto.setString(1,codMat+"%");
+			estatuto.setString(2, plan);
 			ResultSet res = estatuto.executeQuery();
 					
 			while (res.next()){
@@ -319,13 +320,14 @@ public class MateriaDAO {
 		
 	}
 
-	public void buscarParcialMateriaNombre(DefaultTableModel modeloMateria, String nomMat) {
+	public void buscarParcialMateriaNombre(DefaultTableModel modeloMateria, String nomMat, String plan) {
 		
 		Conexion conex = new Conexion();
 		try{
-			String consulta = "SELECT * FROM materia where matnom like ? order by matnom";
+			String consulta = "SELECT * FROM materia where matnom like ? and plan=? order by matnom";
 			PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
 			estatuto.setString(1,nomMat+"%");
+			estatuto.setString(2, plan);
 			ResultSet res = estatuto.executeQuery();
 					
 			while (res.next()){

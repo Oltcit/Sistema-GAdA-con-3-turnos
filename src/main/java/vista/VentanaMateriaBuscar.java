@@ -72,7 +72,7 @@ public class VentanaMateriaBuscar extends JFrame {
 		this.miCoordinador = miCoordinador;
 	}
 	
-	public void mostrarDatosMateriaConTableModel(int btn, String codMat, String nomMat) {
+	public void mostrarDatosMateriaConTableModel(int btn, String codMat, String nomMat, String plan) {
 		DefaultTableModel modeloMateria = new DefaultTableModel();
 		table = new JTable();
 		
@@ -98,15 +98,15 @@ public class VentanaMateriaBuscar extends JFrame {
 		
 		MateriaDAO miMateriaDAO = new MateriaDAO();
 		if (btn==1){
-			miMateriaDAO.buscarMaterias(modeloMateria);
+			miMateriaDAO.buscarMaterias(modeloMateria,plan);
 			setTitle("Materias ordenadas por CURSO");
 		}
 		if (btn==2){
-			miMateriaDAO.buscarParcialMateriaCodigo(modeloMateria,codMat);
+			miMateriaDAO.buscarParcialMateriaCodigo(modeloMateria,codMat,plan);
 			setTitle("Materias ordenadas por CODIGO");
 		}
 		if (btn==3){
-			miMateriaDAO.buscarParcialMateriaNombre(modeloMateria,nomMat);
+			miMateriaDAO.buscarParcialMateriaNombre(modeloMateria,nomMat,plan);
 			setTitle("Materias ordenadas por NOMBRE");
 		}
 		scrollPane.setViewportView(table);

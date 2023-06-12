@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AARepoMaterias" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5e8cac3e-7fa9-419a-b6c6-e4913046cc48">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapGada"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapBaseGada"/>
 	<parameter name="ParamPlan" class="java.lang.String"/>
 	<parameter name="ParamCodMat" class="java.lang.String"/>
 	<queryString language="SQL">
@@ -17,24 +17,34 @@ order by basegada.materia.anio,
 	basegada.materia.matnom]]>
 	</queryString>
 	<field name="codmat" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codmat"/>
 		<property name="com.jaspersoft.studio.field.label" value="codmat"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="materia"/>
+		<fieldDescription><![CDATA[código de la materia]]></fieldDescription>
 	</field>
 	<field name="matnom" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="matnom"/>
 		<property name="com.jaspersoft.studio.field.label" value="matnom"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="materia"/>
+		<fieldDescription><![CDATA[nombre de la materia]]></fieldDescription>
 	</field>
 	<field name="anio" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="anio"/>
 		<property name="com.jaspersoft.studio.field.label" value="anio"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="materia"/>
+		<fieldDescription><![CDATA[año que se cursa 1,2,3 o 4.]]></fieldDescription>
 	</field>
 	<field name="plan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="plan"/>
 		<property name="com.jaspersoft.studio.field.label" value="plan"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="materia"/>
+		<fieldDescription><![CDATA[resolución del plan(alfanumérico)]]></fieldDescription>
 	</field>
 	<field name="modulos" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="modulos"/>
 		<property name="com.jaspersoft.studio.field.label" value="modulos"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="materia"/>
+		<fieldDescription><![CDATA[cantidad de módulos de la materia]]></fieldDescription>
 	</field>
 	<group name="anio">
 		<groupExpression><![CDATA[$F{anio}]]></groupExpression>
@@ -59,10 +69,6 @@ order by basegada.materia.anio,
 	</background>
 	<title>
 		<band height="82" splitType="Stretch">
-			<image>
-				<reportElement x="0" y="0" width="80" height="70" uuid="814caa19-56d9-414f-9e03-e943c2ff5f41"/>
-				<imageExpression><![CDATA["D:/eclipse Mars win32/Prácticas/Base de Datos/pruebaMesaExamen/src/main/java/imagenes/Is44 logo.JPG"]]></imageExpression>
-			</image>
 			<staticText>
 				<reportElement x="130" y="2" width="250" height="30" uuid="606ef23d-c8ad-4de8-a69e-e1c38e4c3c9b"/>
 				<textElement>

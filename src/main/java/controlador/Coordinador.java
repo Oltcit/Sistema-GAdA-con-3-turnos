@@ -179,9 +179,9 @@ public class Coordinador {
 		miVentanaMateria.limpiar();	
 	}
 	
-	public void mostrarVentanaMateriaBuscar(int btn, String codMat, String nomMat) {
+	public void mostrarVentanaMateriaBuscar(int btn, String codMat, String nomMat, String plan) {
 		miVentanaMateriaBuscar.setVisible(true);
-		miVentanaMateriaBuscar.mostrarDatosMateriaConTableModel(btn,codMat,nomMat);
+		miVentanaMateriaBuscar.mostrarDatosMateriaConTableModel(btn,codMat,nomMat,plan);
 	}
 	
 	public void mostrarVentanaAlumnoMateria(){
