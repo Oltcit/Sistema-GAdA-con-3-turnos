@@ -11,7 +11,7 @@ import controlador.Coordinador;
 import modelo.AlumnoVO;
 import modelo.AlumnomateriaDAO;
 import modelo.AlumnomateriaVO;
-import modelo.CalculaAi;
+
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -47,7 +47,7 @@ public class VentanaAlumnoMateria extends JFrame {
 	private JTextField txtFolio;
 	private JTextField txtFecha;
 	private Coordinador miCoordinador;
-	static DefaultComboBoxModel<String> modeloComboMaterias;
+	
 	
 	private int numAiBaja;
 	private int accion; //si es 1 es porque presione boton agregar
@@ -66,6 +66,8 @@ public class VentanaAlumnoMateria extends JFrame {
 	private JButton btnReporte;
 	private JLabel label_2;
 	private JComboBox<String> cbMateria;
+	//static DefaultComboBoxModel<String> modeloComboMaterias;
+	DefaultComboBoxModel<String> modeloComboMaterias;
 	private JLabel lblAoDeCursada;
 	private JYearChooser selectorAnio;
 	private JLabel lblCantidad;
@@ -75,7 +77,10 @@ public class VentanaAlumnoMateria extends JFrame {
 	private JRadioButton rbTv;
 	private JLabel label;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+	AlumnomateriaDAO miAlumnoMateriaDAO = new AlumnomateriaDAO();
 
+	private String txDni;
+	
 	public void setCoordinador(Coordinador miCoordinador) {
 		this.miCoordinador = miCoordinador;
 	}
@@ -83,7 +88,7 @@ public class VentanaAlumnoMateria extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -97,7 +102,7 @@ public class VentanaAlumnoMateria extends JFrame {
 		});
 	}
 
-
+*/
 	/**
 	 * Create the frame.
 	 */
@@ -192,7 +197,8 @@ public class VentanaAlumnoMateria extends JFrame {
 		btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				volver();
+				limpiar();
+				//volver();
 			}
 		});
 		panelBotones.add(btnCancelar);
@@ -217,7 +223,8 @@ public class VentanaAlumnoMateria extends JFrame {
 		
 		cbMateria.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
-				verMateriaDelCombo();
+				//int dni=Integer.valueOf(txtDni.getText());
+				verMateriaDelComboSinDni(miAlumnoMateriaDAO);
 			}
 		});
 		cbMateria.setEditable(false);
@@ -282,7 +289,7 @@ public class VentanaAlumnoMateria extends JFrame {
 		panelNotas.add(lblSituacin);
 		
 		cbSituacion = new JComboBox<String>();
-		cbSituacion.setModel(new DefaultComboBoxModel(new String[] {"", "A FINAL", "RECURSA"}));
+		cbSituacion.setModel(new DefaultComboBoxModel<String>(new String[] {"", "A FINAL", "RECURSA"}));
 		panelNotas.add(cbSituacion);
 		
 		JLabel lblNotaFinal = new JLabel("Nota Final:");
@@ -332,6 +339,7 @@ public class VentanaAlumnoMateria extends JFrame {
 		buttonGroup.add(rbTv);
 		panelNotas.add(rbTv);
 	}
+	
 	protected void eliminarAlumnoMateria() {
 		System.out.println("entre al eliminarAlumnoMateria");
 		int num=cbMateria.getItemCount();
@@ -361,7 +369,7 @@ public class VentanaAlumnoMateria extends JFrame {
 		//int num=cbMateria.getItemCount();
 		if (cbMateria.getItemCount()!=0){
 			habilita(false, false, false,true, true, true, true, true,true, true,true,true,true, true, true, true, true, true,
-					false, false, false, true,false);
+					false, false, false, false, true,false);
 		}
 		else{
 			JOptionPane.showMessageDialog(null, "No tiene materias asignadas", "Información",JOptionPane.WARNING_MESSAGE);
@@ -370,7 +378,7 @@ public class VentanaAlumnoMateria extends JFrame {
 	/**
 	 * Registra una nueva relación Alumno-Materia
 	 */
-	@SuppressWarnings("null")
+	//@SuppressWarnings("null")
 	protected void guardarAlumnoMateria() {
 	
 		try{
@@ -398,11 +406,11 @@ public class VentanaAlumnoMateria extends JFrame {
 			miAlumnomateriaVO.setFecha(txtFecha.getText());
 			}
 			if (rbTm.isSelected())
-				miAlumnomateriaVO.setTurno("tm");
+				miAlumnomateriaVO.setTurno("TM");
 			if (rbTt.isSelected())
-				miAlumnomateriaVO.setTurno("tt");
+				miAlumnomateriaVO.setTurno("TT");
 			if (rbTv.isSelected())
-				miAlumnomateriaVO.setTurno("tv");
+				miAlumnomateriaVO.setTurno("TV");
 			
 			if (accion!=1){
 				miCoordinador.modificarAlumnoMateria(miAlumnomateriaVO);
@@ -416,31 +424,72 @@ public class VentanaAlumnoMateria extends JFrame {
 		}
 	}
 
-	protected void volver() {
+	/*protected void volver() {
 		//this.dispose();	
 		limpiar();
-	}
+	}*/
 
-	protected void verMateriaDelCombo() {
+	/*
+	 * Probar hacer 2 métodos verMateriaDelComboConDni y verMateriaDelComboSinDni
+	 */
+	protected void verMateriaDelCombo(AlumnomateriaDAO miAlumnoMateriaDAO, int dniAlum) {
 		
 		String cod = (String) cbMateria.getSelectedItem();
+		System.out.println("Ver materia del combo en VentanaAlumnomateria el codigo de la mat es: "+cod);
 		try{
-		String txDni=txtDni.getText();		
-		int dni=Integer.valueOf(txDni.trim());
-		AlumnomateriaDAO miAlumnoMateria2 = new AlumnomateriaDAO();
-		AlumnomateriaVO alu;
+		//txDni=txtDni.getText();	
+		System.out.println("Huracan :"+dniAlum);
+		//int dni=Integer.valueOf(txDni.trim());
+		//System.out.println("DNI en verMateriadelCombo  VentanaAlumnoMateria "+dni);
+		//AlumnomateriaDAO miAlumnoMateria2 = new AlumnomateriaDAO();
+		//AlumnomateriaVO alu;
 		
 		if (accion !=1){	
-		alu=miAlumnoMateria2.buscarMateriaAlumno(dni, cod);
-		muestraAlumnoMateria(alu);
+		//alu=miAlumnoMateria2.buscarMateriaAlumno(dni, cod);
+			//alu=miAlumnoMateriaDAO.buscarMateriaAlumno(dni, cod);
+		//System.out.println("AlumnoMateriaVO: "+alu.getAldni2()+"   turno "+alu.getTurno());
+		
+			muestraAlumnoMateria(miAlumnoMateriaDAO.buscarMateriaAlumno(dniAlum, cod));
+		//muestraAlumnoMateria(alu);
+		
 		}
 		
 		}catch (NumberFormatException e){
 			System.out.println("error al intentar mostrar la materia de hoy");
+			e.printStackTrace();
 		}
 	}
 
+protected void verMateriaDelComboSinDni(AlumnomateriaDAO miAlumnoMateriaDAO) {
+		
+		String cod = (String) cbMateria.getSelectedItem();
+		System.out.println("Ver materia del combo en VentanaAlumnomateria el codigo de la mat es: "+cod);
+		try{
+		//txDni=txtDni.getText();	
+		System.out.println("Huracan :"+dniAlum);
+		//int dni=Integer.valueOf(txDni.trim());
+		//System.out.println("DNI en verMateriadelCombo  VentanaAlumnoMateria "+dni);
+		//AlumnomateriaDAO miAlumnoMateria2 = new AlumnomateriaDAO();
+		//AlumnomateriaVO alu;
+		
+		if (accion !=1){	
+		//alu=miAlumnoMateria2.buscarMateriaAlumno(dni, cod);
+			//alu=miAlumnoMateriaDAO.buscarMateriaAlumno(dni, cod);
+		//System.out.println("AlumnoMateriaVO: "+alu.getAldni2()+"   turno "+alu.getTurno());
+		
+			muestraAlumnoMateria(miAlumnoMateriaDAO.buscarMateriaAlumno(dniAlum, cod));
+		//muestraAlumnoMateria(alu);
+		
+		}
+		
+		}catch (NumberFormatException e){
+			System.out.println("error al intentar mostrar la materia de hoy");
+			e.printStackTrace();
+		}
+	}
+	
 	private void muestraAlumnoMateria(AlumnomateriaVO miAlumnomateria) {
+		if (miAlumnomateria != null) {
 		numAiBaja=miAlumnomateria.getCodalumnomateria();
 		selectorAnio.setValue(miAlumnomateria.getFechaDeCursada());
 		txtNota1.setText(miAlumnomateria.getParcial1());
@@ -449,6 +498,18 @@ public class VentanaAlumnoMateria extends JFrame {
 		txtRecu2.setText(miAlumnomateria.getRecup2());
 		txtRecu3.setText(miAlumnomateria.getRecup3());
 		cbSituacion.setSelectedItem(miAlumnomateria.getSituacion());
+		
+		System.out.println("El radioboton: "+miAlumnomateria.getTurno());
+		
+		if (miAlumnomateria.getTurno().equals("TM"))
+			rbTm.setSelected(true);
+		
+		if (miAlumnomateria.getTurno().equals("TT"))
+			rbTt.setSelected(true);
+		
+		if (miAlumnomateria.getTurno().equals("TV"))
+			rbTv.setSelected(true);
+		
 		if (miAlumnomateria.getNotafinal()==0)
 		{
 			cbNotaFinal.setSelectedIndex(0);
@@ -466,7 +527,7 @@ public class VentanaAlumnoMateria extends JFrame {
 		else
 			txtFolio.setText(String.valueOf(miAlumnomateria.getFolio()));
 		txtFecha.setText(miAlumnomateria.getFecha());
-		
+		}
 	}
 	/**
 	 * Agrega un registro con la materia que va a cursar un alumno
@@ -474,7 +535,7 @@ public class VentanaAlumnoMateria extends JFrame {
 	protected void agregarAlumnoMateria() {
 		accion=1;
 		habilita(true, false, false,false, false, false,false, false, false,false, false,false,false,false, false,false, false, false,true, false, 
-				false,true, false);
+				false, false, true, false);
 		buscarParcialApellido();
 	} 
 
@@ -507,13 +568,14 @@ public class VentanaAlumnoMateria extends JFrame {
 			accion=0;
 			lblCantidad.setText("");
 			
-			habilita(true, false, false,false, false, false, false, false,false,false,false, false, false, false, false, false, false, false,true, false, false, true,
-					false);
+			habilita(true, false, false,false, false, false, false, false,false,false,false, false, false, false, false, false, false, false,true, false,
+					false, true, true,	false);
+			txtAlApyNom.grabFocus();
 	}
 
 	public void habilita(boolean ape, boolean dni, boolean codmat,boolean sele, boolean par1, boolean recu1, boolean par2, boolean recu2,
 				boolean recu3, boolean sit, boolean nf, boolean libro, boolean folio,boolean fecha,boolean tm,boolean tt,boolean tv, boolean bGuardar,
-				boolean bAgregar, boolean bModificar, boolean bEliminar, boolean bCancelar,boolean bReporte) {
+				boolean bAgregar, boolean bModificar, boolean bEliminar, boolean bBuscar, boolean bCancelar,boolean bReporte) {
 			
 			txtAlApyNom.setEditable(ape);
 			txtDni.setEditable(dni);
@@ -537,6 +599,7 @@ public class VentanaAlumnoMateria extends JFrame {
 			btnAgregar.setEnabled(bAgregar);
 			btnModificar.setEnabled(bModificar);
 			btnEliminar.setEnabled(bEliminar);
+			btnBuscar.setEnabled(bBuscar);
 			btnCancelar.setVisible(bCancelar);
 			btnReporte.setEnabled(bReporte);
 	}
@@ -546,21 +609,19 @@ public class VentanaAlumnoMateria extends JFrame {
 			String nomAlum=miAlumno.getAlapynom();
 			dniAlum=miAlumno.getAldni();
 			
-			
 			if (accion==1){
 				// porque presione boton agregar entonces va a cargar el combo con las materias que aún no esta cursando
-				//llenaComboMateriasNuevasAlumno(modeloComboMaterias,dniAlum,nomAlum);
-				miCoordinador.mostrarVentanaAlumnoMateriaNueva(numAi, dniAlum, nomAlum);
+				miCoordinador.mostrarVentanaAlumnoMateriaNueva(dniAlum, nomAlum);
 			}else{
-				
-				llenaComboMateriasAlumno(modeloComboMaterias,dniAlum,nomAlum);
+				llenaComboMateriasAlumno(modeloComboMaterias,dniAlum,miAlumnoMateriaDAO);
 				txtAlApyNom.setText(miAlumno.getAlapynom());
 				txtDni.setText(String.valueOf(miAlumno.getAldni()));
 				int num=cbMateria.getItemCount();
 				lblCantidad.setText("Anotado en "+String.valueOf(num)+" materias");
-				habilita(true, false, true, true,true, true, true, true, true, true, true, true, true, true,true,true,true, false,false, true, true, true,
-						true);
-				verMateriaDelCombo();
+				habilita(true, false, true, true,true, true, true, true, true, true, true, true, true, true,true,true,true, false,false, true, true,
+						false, true, true);
+			
+				verMateriaDelCombo(miAlumnoMateriaDAO, dniAlum);
 			}
 			
 	}
@@ -568,11 +629,12 @@ public class VentanaAlumnoMateria extends JFrame {
 	 * Carga el combo con las materias que está cursando el alumno
 	 * @param modeloComboMateria
 	 * @param dniAlum
+	 * @param miAlumnoMateriaDAO 
 	 * @param nomAlum
 	 */
-	public void llenaComboMateriasAlumno(DefaultComboBoxModel<String> modeloComboMateria, int dniAlum, String nomAlum) {
-		miCoordinador.cargarComboMateriasAlumno(modeloComboMateria,dniAlum,nomAlum);
+	public void llenaComboMateriasAlumno(DefaultComboBoxModel<String> modeloComboMateria, int dniAlum, AlumnomateriaDAO miAlumnoMateriaDAO) {
 		
+		miAlumnoMateriaDAO.cargarComboMateriasAlumno(modeloComboMateria,dniAlum);
 	}
 	/**
 	 * No se usa más, cargaba el combo con las materias que se podía anotar para cursar
@@ -586,13 +648,4 @@ public class VentanaAlumnoMateria extends JFrame {
 		
 	}
 
-	public JRadioButton getRbTt() {
-		return rbTt;
-	}
-	public JRadioButton getRbTv() {
-		return rbTv;
-	}
-	public JRadioButton getRbTm() {
-		return rbTm;
-	}
 }

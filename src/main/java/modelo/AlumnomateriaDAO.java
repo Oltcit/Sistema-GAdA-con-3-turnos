@@ -18,7 +18,7 @@ public class AlumnomateriaDAO {
 		Conexion conex= new Conexion();
 		AlumnomateriaVO miAlumnoMateria = new AlumnomateriaVO();
 		boolean existe=false;
-		System.out.println("Llegue al dao");
+		System.out.println("Llegue al dao hoy dni "+dni+" codigo materia "+cod);
 		try {
 			String consulta = "SELECT * FROM alumnomateria where aldni2 = ? and codmat2 = ? ";
 			PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
@@ -26,13 +26,17 @@ public class AlumnomateriaDAO {
 			estatuto.setString(2,cod);
 			ResultSet res = estatuto.executeQuery();
 			
-			
+			System.out.println("entre al try de hoy");
 			while(res.next()){
 				
+				System.out.println("entre al while de hoy");
+				
 				existe=true;
+				
 				//se debe escribir el nombre de la columna de la tabla
+				miAlumnoMateria.setAldni2(res.getInt("aldni2"));
 				miAlumnoMateria.setCodalumnomateria(Integer.parseInt(res.getString("codalumnomateria")));
-				miAlumnoMateria.setAldni2(Integer.parseInt(res.getString("aldni2")));
+				//miAlumnoMateria.setAldni2(Integer.parseInt(res.getString("aldni2")));
 				miAlumnoMateria.setCodmat2(res.getString("codmat2"));
 				miAlumnoMateria.setFechaDeCursada(Integer.parseInt(res.getString("fechadecursada")));
 				miAlumnoMateria.setParcial1(res.getString("parcial1"));
@@ -41,11 +45,19 @@ public class AlumnomateriaDAO {
 				miAlumnoMateria.setRecup2(res.getString("recup2"));
 				miAlumnoMateria.setRecup3(res.getString("recup3"));
 				miAlumnoMateria.setSituacion(res.getString("situacion"));
-				miAlumnoMateria.setNotafinal(Integer.parseInt(res.getString("notafinal")));
-				miAlumnoMateria.setLibro(Integer.parseInt(res.getString("libro")));
-				miAlumnoMateria.setFolio(Integer.parseInt(res.getString("folio")));
+				String nota = res.getString("notafinal");
+				if (nota != null) {
+				
+					miAlumnoMateria.setNotafinal(Integer.parseInt(res.getString("notafinal")));
+					miAlumnoMateria.setLibro(Integer.parseInt(res.getString("libro")));
+					miAlumnoMateria.setFolio(Integer.parseInt(res.getString("folio")));
+				}
+			
 				miAlumnoMateria.setFecha(res.getString("fecha"));
-				miAlumnoMateria.setTurno(res.getString("turno"));
+			  	miAlumnoMateria.setTurno(res.getString("turno"));
+				//System.out.println("Turno  "+miAlumnoMateria.getTurno());
+				System.out.println("situacion: "+miAlumnoMateria.getSituacion());
+				
 			 }
 			res.close();
 			conex.desconectar();
@@ -54,28 +66,37 @@ public class AlumnomateriaDAO {
 			} catch (SQLException e) {
 					JOptionPane.showMessageDialog(null, "Error, no se conecto");
 					System.out.println(e);
+			} catch (Exception e) {
+				System.out.println("Entre al catch");
+					e.printStackTrace();
 			}
 		finally{
 			if (existe) {
+				System.out.println("entre al finally existe");
 				return miAlumnoMateria;
 			}
 			else {
+				System.out.println("entre al finallly no existe");
 				return null;				
 			}
 		}
 	}
  
-	public void cargarComboMateriasAlumno(DefaultComboBoxModel<String> modeloComboMateria, int dniAlum, String nomAlum) {
-		Conexion conex = new Conexion();
-
+	public void cargarComboMateriasAlumno(DefaultComboBoxModel<String> modeloComboMateria, int dniAlum) {
+		System.out.println("Entre a cargarComboMateriasAlumnno en AlumnoMateriaDAO dni: "+dniAlum);
 		try{
+			Conexion conex = new Conexion();
 			String consulta = "SELECT codmat2 FROM alumnomateria where aldni2 = ? order by codalumnomateria";
 			PreparedStatement estatutoMatAl = conex.getConnection().prepareStatement(consulta);
 			estatutoMatAl.setInt(1,dniAlum);
 			ResultSet resMatAl = estatutoMatAl.executeQuery();
 			
-			while (resMatAl.next()){
 
+			System.out.println("Entre al try de cargarComboMateriasAlumnno en AlumnoMateriaDAO dni: "+dniAlum);
+			
+			modeloComboMateria.removeAllElements();
+			while (resMatAl.next()){
+				System.out.println("Entre al while de AlumnoMateriaDAO cargarComboMateriasAlumno dni: "+dniAlum);
 				modeloComboMateria.addElement(resMatAl.getString("codmat2"));
 				
 			}

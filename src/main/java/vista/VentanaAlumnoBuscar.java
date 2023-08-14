@@ -22,6 +22,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -131,12 +133,31 @@ public class VentanaAlumnoBuscar extends JFrame {
 				// si ventana == 1 pasa los datos a la VentanaAlumno
 				// 	          == 2 pasa los datos a la VentanaAlumnoMateria
 				//
+				 int fila = table.getSelectedRow();
 				if (ventana==1)
-					miCoordinador.pasarDatosAlumno(pasarDatosAlumno(e));
+					miCoordinador.pasarDatosAlumno(pasarDatosAlumno(fila));
 				else					
-					miCoordinador.pasarDatosAlumnoMateria(pasarDatosAlumno(e));
+					miCoordinador.pasarDatosAlumnoMateria(pasarDatosAlumno(fila));
+					dispose();
 			}
 		});
+		
+		table.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				  if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+	                    // Obtener la fila seleccionada
+	                    int fila = table.getSelectedRow();
+	                    if (ventana==1)
+	    					miCoordinador.pasarDatosAlumno(pasarDatosAlumno(fila));
+	    				else					
+	    					miCoordinador.pasarDatosAlumnoMateria(pasarDatosAlumno(fila));
+	    					dispose();
+				  }     
+			}
+		});
+		
+		
 		
 		table.setModel(modelo);
 		table.getTableHeader().setReorderingAllowed(false);
@@ -284,20 +305,21 @@ public class VentanaAlumnoBuscar extends JFrame {
 	 * @param e
 	 * @return
 	 */
-	protected AlumnoVO pasarDatosAlumno(MouseEvent e) {
+	//protected AlumnoVO pasarDatosAlumno(MouseEvent e) {
+		protected AlumnoVO pasarDatosAlumno(int fila) {
 		AlumnoVO miAlumno = new AlumnoVO();
-		int row=table.rowAtPoint(e.getPoint());
-		miAlumno.setAldni(Integer.valueOf(table.getValueAt(row, 0).toString()));
-		miAlumno.setAlapynom(table.getValueAt(row, 1).toString());
-		miAlumno.setAlfnac(table.getValueAt(row, 2).toString());
-		miAlumno.setAldir(table.getValueAt(row, 3).toString());
-		miAlumno.setAlloc(table.getValueAt(row, 4).toString());
-		miAlumno.setAlmail(table.getValueAt(row, 5).toString());
-		miAlumno.setAltel(table.getValueAt(row, 6).toString());
-		miAlumno.setAlcel(table.getValueAt(row, 7).toString());
-		miAlumno.setAltitulo(table.getValueAt(row, 8).toString());
+	//	int row=table.rowAtPoint(e.getPoint());
+		miAlumno.setAldni(Integer.valueOf(table.getValueAt(fila, 0).toString()));
+		miAlumno.setAlapynom(table.getValueAt(fila, 1).toString());
+		miAlumno.setAlfnac(table.getValueAt(fila, 2).toString());
+		miAlumno.setAldir(table.getValueAt(fila, 3).toString());
+		miAlumno.setAlloc(table.getValueAt(fila, 4).toString());
+		miAlumno.setAlmail(table.getValueAt(fila, 5).toString());
+		miAlumno.setAltel(table.getValueAt(fila, 6).toString());
+		miAlumno.setAlcel(table.getValueAt(fila, 7).toString());
+		miAlumno.setAltitulo(table.getValueAt(fila, 8).toString());
 	
-		String estado = table.getValueAt(row, 9).toString();
+		String estado = table.getValueAt(fila, 9).toString();
 		
 		if (estado.equals("false")){
 			miAlumno.setAldoc((byte) 0);

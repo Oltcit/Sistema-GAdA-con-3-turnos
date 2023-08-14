@@ -27,6 +27,7 @@ import modelo.AlumnomateriaDAO;
 import modelo.AlumnomateriaVO;
 import modelo.AlumnomesaDAO;
 import modelo.CalculaAi;
+import modelo.Conexion;
 import modelo.MateriaDAO;
 import modelo.MesaDAO;
 
@@ -44,9 +45,17 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.SwingConstants;
+import javax.swing.JComboBox;
 
 public class VentanaAlumnoMateriaNueva extends JFrame {
 
@@ -62,6 +71,8 @@ public class VentanaAlumnoMateriaNueva extends JFrame {
 	private JList<String> listaCursa;
 	private DefaultListModel<String> modeloCursa;
 	private JYearChooser selectorAnio;
+	private JComboBox cbPlan;
+	static DefaultComboBoxModel<String> modeloComboPlan;
 
 	private int numAi;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -100,7 +111,7 @@ public class VentanaAlumnoMateriaNueva extends JFrame {
 		JPanel panelNorte = new JPanel();
 		panelNorte.setBorder(new TitledBorder(null, "Datos Alumno", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		contentPane.add(panelNorte, BorderLayout.NORTH);
-		panelNorte.setLayout(new MigLayout("", "[95.00][511.00][90.00,grow]", "[19.00][grow]"));
+		panelNorte.setLayout(new MigLayout("", "[95.00][441.00,grow][80.00,grow][80.00,grow]", "[19.00,grow][grow]"));
 		
 		JLabel labelApyNom = new JLabel("Apellido y Nombre:");
 		panelNorte.add(labelApyNom, "cell 0 0,alignx right");
@@ -110,6 +121,10 @@ public class VentanaAlumnoMateriaNueva extends JFrame {
 		
 		JLabel labelAnioCursada = new JLabel("Año de cursada");
 		panelNorte.add(labelAnioCursada, "cell 2 0,alignx center");
+	
+		selectorAnio = new JYearChooser();
+		selectorAnio.setValue(2023);
+		panelNorte.add(selectorAnio, "cell 3 0,grow");
 		
 		JLabel labelDni = new JLabel("Dni:");
 		panelNorte.add(labelDni, "cell 0 1,alignx right");
@@ -120,9 +135,38 @@ public class VentanaAlumnoMateriaNueva extends JFrame {
 		Calendar cal = Calendar.getInstance();
 		int anioActual = cal.get(Calendar.YEAR);
 		
-		selectorAnio = new JYearChooser();
-		selectorAnio.setValue(anioActual);
-		panelNorte.add(selectorAnio, "cell 2 1,alignx center,growy");
+		JLabel lblNewLabel = new JLabel("Plan de estudio");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		panelNorte.add(lblNewLabel, "cell 2 1,alignx trailing");
+		
+		cbPlan = new JComboBox();
+		cbPlan.setEditable(false);
+		cbPlan.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {		
+				cambiaListaMateriasPorCombo();	
+			}
+		});
+		modeloComboPlan = new DefaultComboBoxModel<String>();
+		cbPlan.setModel(modeloComboPlan);
+		panelNorte.add(cbPlan, "cell 3 1,growx");
+		
+		// Esto es para que al crear el formulario se cargue el combobox
+		try{
+			Conexion conex = new Conexion();
+			ResultSet resMat = null;
+			Statement estatutoMat = conex.getConnection().createStatement();
+			resMat = estatutoMat.executeQuery("SELECT distinct plan from basegada.materia order by plan desc");
+			
+			while (resMat.next()){
+				
+				modeloComboPlan.addElement((String) resMat.getObject(1));
+			}
+			resMat.close();
+			estatutoMat.close();
+			conex.desconectar();
+		}		catch (SQLException e){
+					JOptionPane.showMessageDialog(null, "Error al consultar materias","Error",JOptionPane.ERROR_MESSAGE);
+		}
 		
 		JPanel panelCentro = new JPanel();
 		contentPane.add(panelCentro, BorderLayout.CENTER);
@@ -206,6 +250,8 @@ public class VentanaAlumnoMateriaNueva extends JFrame {
 		panelSur.add(btnCancelar);
 	}
 
+	
+
 	protected void volver() {
 		this.dispose();
 	}
@@ -217,6 +263,7 @@ public class VentanaAlumnoMateriaNueva extends JFrame {
 		int doc;
 		int cantMat=modeloCursa.size();
 		if (modeloCursa.size()>0){
+			if (rbTm.isSelected() || rbTt.isSelected() || rbTv.isSelected()) {
 			for(int i=0;i<modeloCursa.size();i++){
 				codMat="";
 				fila=modeloCursa.get(i);				
@@ -245,6 +292,7 @@ public class VentanaAlumnoMateriaNueva extends JFrame {
 				miAlumnoMateriaVO.setRecup3("");
 				miAlumnoMateriaVO.setSituacion("");
 				
+				
 				if (rbTm.isSelected())
 					miAlumnoMateriaVO.setTurno("TM");
 				if (rbTt.isSelected())
@@ -257,6 +305,10 @@ public class VentanaAlumnoMateriaNueva extends JFrame {
 				miAlumnoMateriaDAO.registrarAlumnoMateria(miAlumnoMateriaVO, cantMat);
 			}
 			modeloCursa.clear();
+		
+		}
+			else
+				JOptionPane.showMessageDialog(null, "Debe seleccionar un turno para la cursada","Error",JOptionPane.ERROR_MESSAGE);
 		}
 		else
 			JOptionPane.showMessageDialog(null, "Debe seleccionar materias para cursar","Error",JOptionPane.ERROR_MESSAGE);	
@@ -270,13 +322,25 @@ public class VentanaAlumnoMateriaNueva extends JFrame {
 		this.miCoordinador = miCoordinador;
 	}
 
-	public void mostrarListaDeMaterias(int numAi, int doc, String nom) {
+	protected void cambiaListaMateriasPorCombo() {
+		
+		if (!lblDni.getText().isEmpty()) {
+			int doc=Integer.valueOf(lblDni.getText());
+		
+		String nom=lblApyNom.getText();
+		mostrarListaDeMaterias(doc, nom);
+		}
+	}
+	
+	//public void mostrarListaDeMaterias(int numAi, int doc, String nom) {
+		public void mostrarListaDeMaterias(int doc, String nom) {
 		modeloTotal.clear();
 		modeloCursa.clear();
 		lblApyNom.setText(nom);
 		lblDni.setText(String.valueOf(doc));
+		String plan=(String) cbPlan.getSelectedItem();
 		MateriaDAO miMateriaDAO = new MateriaDAO();
-		miMateriaDAO.cargarListadoMateriasNuevasAlumno(modeloTotal,doc);
+		miMateriaDAO.cargarListadoMateriasNuevasAlumno(modeloTotal,doc,plan);
 		listaTotal.setModel(modeloTotal);
 	}
 
@@ -298,5 +362,4 @@ public class VentanaAlumnoMateriaNueva extends JFrame {
 		}
 		listaCursa.setModel(modeloCursa);
 	}
-	
 }

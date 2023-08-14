@@ -205,9 +205,11 @@ public class Coordinador {
 		miVentanaMesaBuscar.mostrarDatosMesaConTableModel(btn,codMat,ventana);
 	}
 	
-	public void mostrarVentanaAlumnoMateriaNueva(int numAi, int doc, String nom) {
+	//public void mostrarVentanaAlumnoMateriaNueva(int numAi, int doc, String nom) {
+		public void mostrarVentanaAlumnoMateriaNueva(int doc, String nom) {
 		miVentanaAlumnoMateriaNueva.setVisible(true);
-		miVentanaAlumnoMateriaNueva.mostrarListaDeMaterias(numAi,doc,nom);
+		//miVentanaAlumnoMateriaNueva.mostrarListaDeMaterias(numAi,doc,nom);
+		miVentanaAlumnoMateriaNueva.mostrarListaDeMaterias(doc,nom);
 	}
 	
 	public void mostrarVentanaReportes() {
@@ -287,7 +289,7 @@ public class Coordinador {
 	
 	public void cargarComboMateriasAlumno(DefaultComboBoxModel<String> modeloComboMateria, int dniAlum, String nomAlum) {	
 		AlumnomateriaDAO miAlumnoMateriaDAO = new AlumnomateriaDAO();
-		miAlumnoMateriaDAO.cargarComboMateriasAlumno(modeloComboMateria,dniAlum,nomAlum);
+		miAlumnoMateriaDAO.cargarComboMateriasAlumno(modeloComboMateria,dniAlum);
 	}
 	public void cargarComboMateriasNuevasAlumno(DefaultComboBoxModel<String> modeloComboMateria, int dniAlum, String nomAlum) {
 		MateriaDAO miMateriaDAO = new MateriaDAO();

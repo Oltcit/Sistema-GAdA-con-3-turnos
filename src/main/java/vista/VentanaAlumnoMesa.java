@@ -74,6 +74,8 @@ public class VentanaAlumnoMesa extends JFrame {
 	private boolean quita=false;
 	private JButton btnAlCondicionales;
 	private JTextField txtTurno;
+	private JComboBox<String> cbPlan;
+	static DefaultComboBoxModel<String> modeloComboPlan;
 
 	/**
 	 * Launch the application.
@@ -108,6 +110,12 @@ public class VentanaAlumnoMesa extends JFrame {
 		panelNorte.setBorder(new LineBorder(new Color(0, 0, 0)));
 		contentPane.add(panelNorte, BorderLayout.NORTH);
 		panelNorte.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JLabel lblNewLabel_1 = new JLabel("Plan:");
+		panelNorte.add(lblNewLabel_1);
+		
+		cbPlan = new JComboBox<String>();
+		panelNorte.add(cbPlan);
 		
 		JLabel lblCdigoDeMateria = new JLabel("Código de Materia:");
 		panelNorte.add(lblCdigoDeMateria);

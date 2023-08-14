@@ -240,13 +240,16 @@ public class MateriaDAO {
 		
 	}
 
-	public void cargarListadoMateriasNuevasAlumno(DefaultListModel<String> modeloTotal, int doc) {
+	public void cargarListadoMateriasNuevasAlumno(DefaultListModel<String> modeloTotal, int doc, String plan) {
 		Conexion conex = new Conexion();
 		try{
-			String consulta = "SELECT anio,codmat,matnom FROM materia where codmat not in(SELECT codmat2 FROM alumnomateria where aldni2 = ?)"
-					+ "  order by anio";
+			String consulta = "SELECT anio,codmat,matnom FROM materia where plan=? and codmat not in"
+					+ "(SELECT codmat2 FROM alumnomateria where aldni2 = ?) order by anio";
+			/*String consulta = "SELECT anio,codmat,matnom FROM materia where codmat not in(SELECT codmat2 FROM alumnomateria where aldni2 = ?)"
+					+ "  order by anio";*/
 			PreparedStatement estatutoMatAl = conex.getConnection().prepareStatement(consulta);
-			estatutoMatAl.setInt(1,doc);
+			estatutoMatAl.setString(1,plan);
+			estatutoMatAl.setInt(2,doc);
 			ResultSet resMatAl = estatutoMatAl.executeQuery();
 			
 			while (resMatAl.next()){
@@ -263,6 +266,7 @@ public class MateriaDAO {
 			conex.desconectar();
 		}		catch (SQLException e){
 					JOptionPane.showMessageDialog(null, "Error al consultar materias","Error",JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 		}
 	}
 	

@@ -2,6 +2,7 @@ package vista;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -58,6 +59,12 @@ public class VentanaAlumnoParciales extends JFrame {
 	private DefaultTableModel modeloNotasParciales;
 	private JButton btnActualizarTabla;
 	private JLabel label_3;
+	private JLabel labelPlan;
+	private JComboBox<String> cbPlan;
+	static DefaultComboBoxModel<String> modeloComboPlan;
+	private boolean primeraCarga = true; // Bandera para determinar si es la primera carga del cbMaterias
+	private int cantItem=0;
+	private boolean primerPasada = true;
 
 	public Coordinador getMiCoordinador() {
 		return miCoordinador;
@@ -114,7 +121,21 @@ public class VentanaAlumnoParciales extends JFrame {
 		cbMaterias = new JComboBox<String>();
 		cbMaterias.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				verListadoAlumnos();
+				 if (e.getStateChange() == ItemEvent.SELECTED) {
+					// verListadoAlumnos();
+					 if (!primerPasada) {
+						
+						 if (modeloNotasParciales != null) {
+							 modeloNotasParciales.setRowCount(0);
+						 }
+					 	lblMatnom.setText("");
+					 	lblCurso.setText("");
+					 }
+					 else {
+						 primerPasada = false;
+						 
+					 }
+				 }
 			}
 		});
 		modeloComboMaterias = new DefaultComboBoxModel<String>();
@@ -130,6 +151,59 @@ public class VentanaAlumnoParciales extends JFrame {
 		label = new JLabel("              ");
 		panelNorte.add(label);
 		
+		labelPlan = new JLabel("Plan:");
+		panelNorte.add(labelPlan);
+		
+		cbPlan = new JComboBox<String>();
+		cbPlan.setEditable(false);
+		cbPlan.addItemListener(new ItemListener() {
+			private boolean cargaEnProgreso = false;
+			
+			public void itemStateChanged(ItemEvent e) {
+				
+				//elige un plan y actualiza el combo de las materias
+				
+				 if (e.getStateChange() == ItemEvent.SELECTED) {
+			            if (!cargaEnProgreso) {
+			                cargaEnProgreso = true;
+			                
+			                if (!primeraCarga) {
+			                  
+			                    // contar cuantos items tiene y borrarlos primeros
+			                	cantItem=cbMaterias.getItemCount();
+			                	
+			                } else {
+			                    primeraCarga = false; // Marcar que ya no es la primera carga
+			                }
+			                
+			                cambiarMateriasdelCombo();
+			                                
+			                if (cantItem >0) {
+			                	
+			                	// Deshabilita temporalmente el ItemListener
+				                cbPlan.removeItemListener(this);
+				                // aca no seria deshabilitar el cbMaterias?
+				                
+			                	for (int i=0; i<cantItem; i++) {
+			                		if (modeloComboMaterias.getSize()>0) {
+			                			modeloComboMaterias.removeElementAt(0);
+			                		}
+			                	}
+			                }
+			         
+			                // Vuelve a habilitar el ItemListener
+			                cbPlan.addItemListener(this);   
+			                cargaEnProgreso = false;
+			            }		 
+			        }
+			}		
+		});
+		modeloComboPlan = new DefaultComboBoxModel<String>();
+		cbPlan.setModel(modeloComboPlan);
+		panelNorte.add(cbPlan);
+		
+		cargaComboPlan();
+				
 		JLabel lblNewLabel = new JLabel("Año de cursada:");
 		panelNorte.add(lblNewLabel);
 		
@@ -177,17 +251,20 @@ public class VentanaAlumnoParciales extends JFrame {
 		});
 		panelSur.add(btnCancelar);
 		
-		// Esto es para que al crear el formulario se cargue el combobox
+	}
+
+	private void cargaComboPlan() {
+		// TODO Auto-generated method stub
+		// Esto es para que al crear el formulario se cargue el combobox de planes de estudio
 				try{
 					Conexion conex = new Conexion();
 					ResultSet resMat = null;
 					Statement estatutoMat = conex.getConnection().createStatement();
-					resMat = estatutoMat.executeQuery("SELECT codmat from materia order by anio");
+					resMat = estatutoMat.executeQuery("SELECT distinct plan from basegada.materia order by plan desc");
 					
 					while (resMat.next()){
 						
-						modeloComboMaterias.addElement((String) resMat.getObject(1));
-			
+						modeloComboPlan.addElement((String) resMat.getObject(1));
 					}
 					resMat.close();
 					estatutoMat.close();
@@ -195,32 +272,62 @@ public class VentanaAlumnoParciales extends JFrame {
 				}		catch (SQLException e){
 							JOptionPane.showMessageDialog(null, "Error al consultar materias","Error",JOptionPane.ERROR_MESSAGE);
 				}
-		
+	}
+
+	protected void cambiarMateriasdelCombo() {
+		/*
+		 * Este método actualiza el combo de las materias cuando se cambia un plan desde el otro combo
+		 */
+		try{
+			String plan=(String) cbPlan.getSelectedItem();
+			Conexion conex = new Conexion();
+			ResultSet resMat = null;
+			
+			String consulta = "SELECT codmat from materia where plan=? order by anio";
+			PreparedStatement estatutoMat = conex.getConnection().prepareStatement(consulta);
+			estatutoMat.setString(1,plan);
+			
+			resMat = estatutoMat.executeQuery();
+			
+			while (resMat.next()){
+				
+				modeloComboMaterias.addElement((String) resMat.getObject(1));
+	
+			}
+			resMat.close();
+			estatutoMat.close();
+			conex.desconectar();
+		}		catch (SQLException e){
+					JOptionPane.showMessageDialog(null, "Error al consultar materias","Error",JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	protected void guardarCambiosDeNotasParciales() {
-	/*	String codMat=lblNomMat.getText().trim();
-		String fecha=lblfechamesa.getText();
-		int libro=Integer.valueOf(txtLibro.getText().trim());
-		int folio=Integer.valueOf(txtFolio.getText().trim());
-		AlumnomesaDAO miAlumnoMesaDAO = new AlumnomesaDAO();
-		miAlumnoMesaDAO.actualizaNotasMesa(table,codMat,fecha,libro,folio,codMesa);
-		*/
 		
 		AlumnomateriaDAO miAlumnomateriaDAO = new AlumnomateriaDAO();
 		miAlumnomateriaDAO.actualizaNotasParciales(tablaNotasParciales);
 	}
 
 	protected void verListadoAlumnos() {
+		/**
+		 * Actualiza la tabla de alumnos y notas parciales cuando se cambia una materia del cbMaterias
+		 */
 		String codigo=(String) cbMaterias.getSelectedItem();
 		MateriaDAO miMateriaDAO = new MateriaDAO();
 		lblMatnom.setText(miMateriaDAO.darNombreMateria(codigo));
 		lblCurso.setText(String.valueOf(miMateriaDAO.darAnioMateria(codigo))+"°");
 		
-		int anio=selectorAnio.getValue();
-		iniciarTabla();
-		AlumnomateriaDAO miAlumnomateriaDAO = new AlumnomateriaDAO();
-		miAlumnomateriaDAO.cargarNotasParciales(tablaNotasParciales.getModel(),codigo,anio);		
+		
+		 if (selectorAnio != null) {
+		        int anio = selectorAnio.getValue();
+		        iniciarTabla();
+		        AlumnomateriaDAO miAlumnomateriaDAO = new AlumnomateriaDAO();
+		        miAlumnomateriaDAO.cargarNotasParciales(tablaNotasParciales.getModel(), codigo, anio);
+		    } else {
+		        // Maneja el caso en que selectorAnio es nulo, por ejemplo, muestra un mensaje de error.
+		        JOptionPane.showMessageDialog(this, "Error: selectorAnio no está inicializado.");
+		    }
+		
 	}
 	
 	private void iniciarTabla() {
@@ -376,4 +483,7 @@ public class VentanaAlumnoParciales extends JFrame {
         cbSituacion.addItem("RECURSA");
         columna.setCellEditor(new DefaultCellEditor(cbSituacion));
 	}
+	/*public JComboBox getCbPlan() {
+		return cbPlan;
+	}*/
 }
