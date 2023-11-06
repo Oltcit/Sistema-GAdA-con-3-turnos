@@ -6,11 +6,17 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -76,6 +82,17 @@ public class VentanaAlumnoMesa extends JFrame {
 	private JTextField txtTurno;
 	private JComboBox<String> cbPlan;
 	static DefaultComboBoxModel<String> modeloComboPlan;
+	
+	private boolean primeraCarga = true; // Bandera para determinar si es la primera carga del cbMaterias
+	private int cantItem=0;
+	private boolean primerPasada = true; // flag para ver si es la primera pasada
+	
+	private Map<String, String> materiaPlan = new HashMap<>();
+	private Map<String, String> materiaNom = new HashMap<>();
+
+	public void setCoordinador(Coordinador miCoordinador) {
+		this.miCoordinador= miCoordinador;		
+	}
 
 	/**
 	 * Launch the application.
@@ -111,19 +128,17 @@ public class VentanaAlumnoMesa extends JFrame {
 		contentPane.add(panelNorte, BorderLayout.NORTH);
 		panelNorte.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
-		JLabel lblNewLabel_1 = new JLabel("Plan:");
+		JLabel lblNewLabel_1 = new JLabel("Código de Materia:");
 		panelNorte.add(lblNewLabel_1);
 		
-		cbPlan = new JComboBox<String>();
-		panelNorte.add(cbPlan);
-		
-		JLabel lblCdigoDeMateria = new JLabel("Código de Materia:");
-		panelNorte.add(lblCdigoDeMateria);
+		cargaMateriasCache(materiaPlan,materiaNom);
 		
 		cbMaterias = new JComboBox<String>();
 		cbMaterias.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent arg0) {
-				tituloConNombreMateria();
+			public void itemStateChanged(ItemEvent e) {
+				 if (e.getStateChange() == ItemEvent.SELECTED) {
+					tituloConNombreMateria();			
+				 }
 			}
 		});
 		cbMaterias.setEditable(false);
@@ -131,23 +146,51 @@ public class VentanaAlumnoMesa extends JFrame {
 		cbMaterias.setModel(modeloComboMaterias);
 		panelNorte.add(cbMaterias);		
 		
-		// Esto es para que al crear el formulario se cargue el combobox
-		try{
-			Conexion conex = new Conexion();
-			ResultSet resMat = null;
-			Statement estatutoMat = conex.getConnection().createStatement();
-			resMat = estatutoMat.executeQuery("SELECT codmat from materia order by anio");
-			
-			while (resMat.next()){
-				
-				modeloComboMaterias.addElement((String) resMat.getObject(1));
+		
+		cbPlan = new JComboBox<String>();
+		cbPlan.setEditable(false);
+		cbPlan.addItemListener(new ItemListener() {
+			private boolean cargaEnProgreso=false;
+			public void itemStateChanged(ItemEvent e) {
+				//elige un plan y cambia el combo de las materias
+				if (e.getStateChange()==ItemEvent.SELECTED) {
+					System.out.println("Entre al cbplan");
+					if (!cargaEnProgreso) {
+						cargaEnProgreso=true;
+						if (!primeraCarga) {
+							//contar cuantos items tiene y borrar los primeros
+							cantItem=cbMaterias.getItemCount();
+						}else {
+							primeraCarga=false;
+							//marcar que ya se hizo la primera carga
+						}
+											
+						cambiarMateriasdelCombo();
+						
+						if (cantItem>0) {
+							//deshabilita temporalmente el Itemlistener
+							cbPlan.removeItemListener(this);
+							for (int i=0; i<cantItem; i++) {
+								if (modeloComboMaterias.getSize()>0) {
+									modeloComboMaterias.removeElementAt(0);
+								}
+							}
+						}
+						// vuelve a habilitar el itemlistener
+						cbPlan.addItemListener(this);
+						cargaEnProgreso=false;
+					}
+				}		
 			}
-			resMat.close();
-			estatutoMat.close();
-			conex.desconectar();
-		}		catch (SQLException e){
-					JOptionPane.showMessageDialog(null, "Error al consultar materias","Error",JOptionPane.ERROR_MESSAGE);
-		}
+		});
+		cbPlan.setEditable(false);
+		modeloComboPlan = new DefaultComboBoxModel<String>();
+		cbPlan.setModel(modeloComboPlan);
+		cargaComboPlan();
+		
+		JLabel lblCdigoDeMateria = new JLabel("Plan:");
+		panelNorte.add(lblCdigoDeMateria);
+		panelNorte.add(cbPlan);
 	
 		JLabel lblNewLabel = new JLabel("     ");
 		panelNorte.add(lblNewLabel);
@@ -324,7 +367,33 @@ public class VentanaAlumnoMesa extends JFrame {
 		listaActa.setBackground(new Color(255,250,240));
 		scrollPaneActa.setViewportView(listaActa);		
 	}
-	
+	/**
+	 * Carga en un Hashmap(materiaPlan) todas los codigos de materias con su plan
+	 * Carga en un Hashmap(materiaNom) todas los codigos de materias con su nombre
+	 * @param materiasCache2
+	 */
+	private void cargaMateriasCache(Map<String, String> materiaPlan, Map<String, String> materiaNom) {
+		try {
+			Conexion conex=new Conexion();
+			
+			String consulta = "SELECT codmat, plan, matnom from materia order by matnom";
+			Statement estatuto = conex.getConnection().createStatement();
+			ResultSet res = estatuto.executeQuery(consulta);
+			
+			while(res.next()) {
+				System.out.println(res.getString(1)+"   "+res.getString(2)+"     "+res.getString(3));
+				materiaPlan.put(res.getString(1), res.getString(2));
+				materiaNom.put(res.getString(1), res.getString(3));
+			}
+			res.close();
+			estatuto.close();
+			conex.desconectar();
+			
+		}catch (Exception e){
+			e.printStackTrace();
+		}		
+	}
+
 	protected void agregarAlumnosCondicionales() {
 		
 		
@@ -453,10 +522,6 @@ public class VentanaAlumnoMesa extends JFrame {
 		miCoordinador.mostrarVentanaMesa(modeloComboMaterias);
 	}
 		
-	public void setCoordinador(Coordinador miCoordinador) {
-		this.miCoordinador= miCoordinador;		
-	}
-
 	public void limpiar() {
 	cbMaterias.setSelectedItem(0);
 	txtFecha.setText("");
@@ -472,11 +537,17 @@ public class VentanaAlumnoMesa extends JFrame {
 
 	private void actualizaComboMaterias() {
 		try{
+			System.out.println("Entre al actualizaComboMaterias 502");
 			Conexion conex = new Conexion();
+			String plan=(String) cbPlan.getSelectedItem();
 			ResultSet resMat = null;
-			Statement estatutoMat = conex.getConnection().createStatement();
-			resMat = estatutoMat.executeQuery("SELECT codmat from materia order by anio");
-			cbMaterias.removeAllItems();
+			
+			String consulta = "SELECT codmat from materia where plan=? order by anio";
+			PreparedStatement estatutoMat = conex.getConnection().prepareStatement(consulta);
+			estatutoMat.setString(1,plan);
+			
+		if (resMat != null) {	
+			//cbMaterias.removeAllItems();
 			while (resMat.next()){
 				
 				modeloComboMaterias.addElement((String) resMat.getObject(1));
@@ -484,6 +555,7 @@ public class VentanaAlumnoMesa extends JFrame {
 			resMat.close();
 			estatutoMat.close();
 			conex.desconectar();
+		}
 		}		catch (SQLException e){
 					JOptionPane.showMessageDialog(null, "Error al consultar materias","Error",JOptionPane.ERROR_MESSAGE);
 		}
@@ -491,6 +563,38 @@ public class VentanaAlumnoMesa extends JFrame {
 		
 	}
 
+	protected void cambiarMateriasdelCombo() {
+		/*
+		 * Este método actualiza el combo de las materias cuando se cambia un plan desde el otro combo
+		 */
+		try {
+		    String plan = (String) cbPlan.getSelectedItem();
+		    
+		    // Crear una lista para almacenar los códigos de materia que coinciden con el plan seleccionado
+		    List<String> codigosMateria = new ArrayList<>();
+
+		    // Obtener los códigos de materia que coinciden con el plan y agregarlos a la lista
+		    for (String codigo : materiaPlan.keySet()) {
+		        String planMat = materiaPlan.get(codigo);
+		        if (planMat.equals(plan)) {
+		            codigosMateria.add(codigo);
+		        }
+		    }
+
+		    // Ordenar la lista alfabéticamente
+		    Collections.sort(codigosMateria);
+
+		    // Agregar los códigos de materia ordenados al JComboBox
+		    for (String codigo : codigosMateria) {
+		        cbMaterias.addItem(codigo);
+		        System.out.println("Código de materia: " + codigo);
+		    }
+		} catch (Exception e) {
+		    JOptionPane.showMessageDialog(null, "Error al consultar materias", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+
+	}
+	
 	public void muestraMesa(MesaVO miMesaVO) {
 		
 		txtLlamado.setText(String.valueOf(miMesaVO.getMesallamado()));
@@ -507,6 +611,27 @@ public class VentanaAlumnoMesa extends JFrame {
 		
 		listarAlumnos(miMesaVO);
 		
+	}
+	
+	private void cargaComboPlan() {
+		// TODO Auto-generated method stub
+		// Esto es para que al crear el formulario se cargue el combobox de planes de estudio
+				try{
+					Conexion conex = new Conexion();
+					ResultSet resMat = null;
+					Statement estatutoMat = conex.getConnection().createStatement();
+					resMat = estatutoMat.executeQuery("SELECT distinct plan from basegada.materia order by plan desc");
+					
+					while (resMat.next()){
+						
+						modeloComboPlan.addElement((String) resMat.getObject(1));
+					}
+					resMat.close();
+					estatutoMat.close();
+					conex.desconectar();
+				}		catch (SQLException e){
+							JOptionPane.showMessageDialog(null, "Error al consultar materias","Error",JOptionPane.ERROR_MESSAGE);
+				}
 	}
 	
 	private void listarAlumnos(MesaVO miMesaVO) {
@@ -565,10 +690,6 @@ public class VentanaAlumnoMesa extends JFrame {
 	
 	private void tituloConNombreMateria(){
 		String codigo=(String) cbMaterias.getSelectedItem();
-		MateriaDAO miMateriaDAO = new MateriaDAO();
-		setTitle("Gestión de mesas de examen de:    "+miMateriaDAO.darNombreMateria(codigo));
-	}
-	public JButton getBtnModificarMesa() {
-		return btnModificarMesa;
+		setTitle("Gestión de mesas de examen de:    "+materiaNom.get(codigo));
 	}
 }

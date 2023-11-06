@@ -483,7 +483,4 @@ public class VentanaAlumnoParciales extends JFrame {
         cbSituacion.addItem("RECURSA");
         columna.setCellEditor(new DefaultCellEditor(cbSituacion));
 	}
-	/*public JComboBox getCbPlan() {
-		return cbPlan;
-	}*/
 }
