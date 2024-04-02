@@ -270,15 +270,17 @@ public class MateriaDAO {
 		}
 	}
 	
-	public void cargarTodasLasMaterias(DefaultListModel<String> modeloTotal) {
+	public void cargarTodasLasMaterias(DefaultListModel<String> modeloTotal, String plan) {
 		// para VentanaReporteListaAlumnos
 		Conexion conex = new Conexion();
 		ResultSet resMat = null;
 		try{
-			String consulta = "SELECT anio,codmat,matnom FROM materia order by anio";
-			Statement estatutoMat = conex.getConnection().createStatement();
+			String consulta = "SELECT anio,codmat,matnom FROM materia where plan=? order by anio";
+			//Statement estatutoMat = conex.getConnection().createStatement();
+			PreparedStatement estatutoMat = conex.getConnection().prepareStatement(consulta);
+			estatutoMat.setString(1, plan);
 			
-			resMat = estatutoMat.executeQuery(consulta);
+			resMat = estatutoMat.executeQuery();
 			
 			while (resMat.next()){
 
@@ -294,6 +296,7 @@ public class MateriaDAO {
 			conex.desconectar();
 		}		catch (SQLException e){
 					JOptionPane.showMessageDialog(null, "Error al consultar materias","Error",JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 		}
 		
 	}

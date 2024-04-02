@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListaAlumnos" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="eed5e3ee-dbd3-4cd4-8bb4-b5bd4b2d6f5e">
-	<property name="com.jaspersoft.studio.data.sql.tables">
-		<![CDATA[bWVzYWV4YW1lbi5hbHVtbm8gLDE2NCwxNTYsNjhlYjNjNWUtNTRjYi00YjAzLWI4YjMtYTU0YWZl
-ODMzYzZkO21lc2FleGFtZW4uYWx1bW5vbWF0ZXJpYSAsMTUsNzIsZTE2MmI0ZmQtZjQ5MC00MWVi
-LTkzMGItMjEwMGU4MGM3NTlhO21lc2FleGFtZW4ubWF0ZXJpYSAsMTY0LDE1LDg3ZmU5Mjc1LTJi
-ODUtNGIwZi04OTQ0LWYwMjQ4NzIwMmVlZTs=]]>
-	</property>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapBaseGada"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>

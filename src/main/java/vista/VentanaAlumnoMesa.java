@@ -89,6 +89,10 @@ public class VentanaAlumnoMesa extends JFrame {
 	
 	private Map<String, String> materiaPlan = new HashMap<>();
 	private Map<String, String> materiaNom = new HashMap<>();
+	
+	private boolean condicional=false;
+	
+	private static int codigoMesa;
 
 	public void setCoordinador(Coordinador miCoordinador) {
 		this.miCoordinador= miCoordinador;		
@@ -154,7 +158,7 @@ public class VentanaAlumnoMesa extends JFrame {
 			public void itemStateChanged(ItemEvent e) {
 				//elige un plan y cambia el combo de las materias
 				if (e.getStateChange()==ItemEvent.SELECTED) {
-					System.out.println("Entre al cbplan");
+			
 					if (!cargaEnProgreso) {
 						cargaEnProgreso=true;
 						if (!primeraCarga) {
@@ -246,7 +250,7 @@ public class VentanaAlumnoMesa extends JFrame {
 				modeloActa.clear();
 				codMat=(String)cbMaterias.getSelectedItem();
 				int btn=3,ventana=2;
-				habilita(false,false,false,true,false,false,true);
+				habilita(false,false,false,false,true,false,false,true);
 				mostrarMesasCargadas(btn,codMat,ventana);		
 			}
 		});
@@ -255,7 +259,16 @@ public class VentanaAlumnoMesa extends JFrame {
 		btnActaVolante = new JButton("Acta volante");
 		btnActaVolante.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				generarActaVolante();
+				/*
+				 * lo saco de aca porque cuando elimino de una mesa cuenta los que hay 
+				 * mas lo que quedan y nunca deja sacar
+				 */
+			//	if ((cantidadAnotados()+modeloActa.size())<3){
+					generarActaVolante();
+				//} else {
+				//	JOptionPane.showMessageDialog(null, "Debe seleccionar hasta 30 alumnos como máximo",
+				//			"Atención!!",JOptionPane.INFORMATION_MESSAGE);
+			//	}
 			}
 		});
 		
@@ -283,7 +296,9 @@ public class VentanaAlumnoMesa extends JFrame {
 		btnAlCondicionales = new JButton("Al. condicionales");
 		btnAlCondicionales.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				condicional=true;
 				agregarAlumnosCondicionales();
+				//condicional=false;
 			}
 		});
 		panelSur.add(btnAlCondicionales);
@@ -367,6 +382,13 @@ public class VentanaAlumnoMesa extends JFrame {
 		listaActa.setBackground(new Color(255,250,240));
 		scrollPaneActa.setViewportView(listaActa);		
 	}
+	
+
+	protected int cantidadAnotados() {
+		AlumnomesaDAO miAlumnomesaDAO = new AlumnomesaDAO();	
+		return miAlumnomesaDAO.contarAnotadosMesa(codigoMesa);
+	}
+
 	/**
 	 * Carga en un Hashmap(materiaPlan) todas los codigos de materias con su plan
 	 * Carga en un Hashmap(materiaNom) todas los codigos de materias con su nombre
@@ -381,7 +403,7 @@ public class VentanaAlumnoMesa extends JFrame {
 			ResultSet res = estatuto.executeQuery(consulta);
 			
 			while(res.next()) {
-				System.out.println(res.getString(1)+"   "+res.getString(2)+"     "+res.getString(3));
+			
 				materiaPlan.put(res.getString(1), res.getString(2));
 				materiaNom.put(res.getString(1), res.getString(3));
 			}
@@ -395,7 +417,13 @@ public class VentanaAlumnoMesa extends JFrame {
 	}
 
 	protected void agregarAlumnosCondicionales() {
-		
+		modifica=true;
+		modeloLista.clear();
+		modeloActa.clear();
+		codMat=(String)cbMaterias.getSelectedItem();
+		int btn=4,ventana=8;
+		habilita(false,false,false,false,true,false,false,true);
+		mostrarMesasCargadas(btn,codMat,ventana);
 		
 	}
 
@@ -405,18 +433,21 @@ public class VentanaAlumnoMesa extends JFrame {
 		modeloActa.clear();
 		codMat=(String)cbMaterias.getSelectedItem();
 		int btn=4,ventana=7;
-		habilita(false,false,false,true,false,false,true);
+		habilita(false,false,false,false,true,false,false,true);
 		mostrarMesasCargadas(btn,codMat,ventana);
 		
 	}
-
+/**
+ * Agrega alumnos a una mesa que ya estaba cerrada
+ * Hay que verificaar que no superen los 30 alumnos
+ */
 	protected void agregaAlumnosMesa() {
 		modifica=true;
 		modeloLista.clear();
 		modeloActa.clear();
 		codMat=(String)cbMaterias.getSelectedItem();
 		int btn=4,ventana=2;
-		habilita(false,false,false,true,false,false,true);
+		habilita(false,false,false,false,true,false,false,true);
 		mostrarMesasCargadas(btn,codMat,ventana);
 		
 	}
@@ -454,6 +485,7 @@ public class VentanaAlumnoMesa extends JFrame {
 		int doc;
 		
 		if(quita){
+			// aca elimina alumnos de la mesa
 			quita=false;
 			if (modeloLista.size()>0){
 				for (int i=0; i<modeloLista.size();i++){
@@ -469,7 +501,8 @@ public class VentanaAlumnoMesa extends JFrame {
 				JOptionPane.showMessageDialog(null, "Debe seleccionar alumnos para quitar de la mesa","Error",JOptionPane.ERROR_MESSAGE);	
 		}else{
 		
-			if (modeloActa.size()>0){
+			//if (modeloActa.size()>0){
+			if ((cantidadAnotados()+modeloActa.size()>0) && (cantidadAnotados()+modeloActa.size()<3)){
 				for (int i=0; i< modeloActa.size();i++){
 					fila= modeloActa.get(i);
 					doc=Integer.valueOf(fila.substring(15, 23));
@@ -478,7 +511,8 @@ public class VentanaAlumnoMesa extends JFrame {
 					CalculaAi cai = new CalculaAi();
 					int numAi = cai.calculaIdAlumnoMesa();
 					AlumnomesaDAO miAlumnoMesaDAO = new AlumnomesaDAO();
-					miAlumnoMesaDAO.altaRegistroAlumnoMesa(numAi,doc,codMesa);		 		
+					miAlumnoMesaDAO.altaRegistroAlumnoMesa(numAi,doc,codMesa,condicional);
+					//condicional=false;
 				}
 				if (!modifica){
 					MesaDAO miMesa=new MesaDAO();
@@ -490,7 +524,11 @@ public class VentanaAlumnoMesa extends JFrame {
 				}		
 			}
 			else
+				if (modeloActa.size()<=0)
 				JOptionPane.showMessageDialog(null, "Debe seleccionar alumnos para la mesa","Error",JOptionPane.ERROR_MESSAGE);	
+				else
+					JOptionPane.showMessageDialog(null, "Debe seleccionar hasta 30 alumnos como máximo",
+						"Atención!!",JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 	
@@ -530,14 +568,15 @@ public class VentanaAlumnoMesa extends JFrame {
 	modeloActa.clear();
 	modeloLista.clear();
 	modifica=false;
+	condicional=false;
 	actualizaComboMaterias();
 	
-	habilita(true,true,true,false,true,true,true);
+	habilita(true,true,true,true,false,true,true,true);
 }
 
 	private void actualizaComboMaterias() {
 		try{
-			System.out.println("Entre al actualizaComboMaterias 502");
+			
 			Conexion conex = new Conexion();
 			String plan=(String) cbPlan.getSelectedItem();
 			ResultSet resMat = null;
@@ -587,7 +626,6 @@ public class VentanaAlumnoMesa extends JFrame {
 		    // Agregar los códigos de materia ordenados al JComboBox
 		    for (String codigo : codigosMateria) {
 		        cbMaterias.addItem(codigo);
-		        System.out.println("Código de materia: " + codigo);
 		    }
 		} catch (Exception e) {
 		    JOptionPane.showMessageDialog(null, "Error al consultar materias", "Error", JOptionPane.ERROR_MESSAGE);
@@ -609,6 +647,7 @@ public class VentanaAlumnoMesa extends JFrame {
 		if (miMesaVO.getTurno().equals("TV"))
 			txtTurno.setText("Vespertino");
 		
+		codigoMesa=miMesaVO.getCodmesa();
 		listarAlumnos(miMesaVO);
 		
 	}
@@ -654,9 +693,11 @@ public class VentanaAlumnoMesa extends JFrame {
 			System.out.println("codigo de materia correlativa "+vecCorr[i]);
 		}
 		
+		String turno =miMesaVO.getTurno();
+		
 		AlumnomateriaDAO miAlumnoMateriaDAO = new AlumnomateriaDAO();	
 	
-		miAlumnoMateriaDAO.buscarAlumnosParaMesa(modeloLista,codMateria,vecCorr,situ);
+		miAlumnoMateriaDAO.buscarAlumnosParaMesa(modeloLista,codMateria,vecCorr,situ,turno);
 		listaAlFinal.setModel(modeloLista);
 	
 	}
@@ -678,9 +719,10 @@ public class VentanaAlumnoMesa extends JFrame {
 		listaActa.setModel(modeloActa);
 	}
 	
-	private void habilita(boolean btnCrea, boolean btnArma, boolean btnModificar, boolean btnActa, boolean btnImprime, boolean btnNotas, boolean btnCancela){
+	private void habilita(boolean btnCrea, boolean btnArma, boolean btnCondicion, boolean btnModificar, boolean btnActa, boolean btnImprime, boolean btnNotas, boolean btnCancela){
 		btnCreaMesa.setEnabled(btnCrea);
 		btnArmaMesa.setEnabled(btnArma);
+		btnAlCondicionales.setEnabled(btnCondicion);
 		btnModificarMesa.setEnabled(btnModificar);
 		btnActaVolante.setEnabled(btnActa);
 		btnImprimeActa.setEnabled(btnImprime);
@@ -692,4 +734,39 @@ public class VentanaAlumnoMesa extends JFrame {
 		String codigo=(String) cbMaterias.getSelectedItem();
 		setTitle("Gestión de mesas de examen de:    "+materiaNom.get(codigo));
 	}
-}
+
+	public void muestraMesaCondicional(MesaVO miMesaVO) {
+			txtLlamado.setText(String.valueOf(miMesaVO.getMesallamado()));
+			txtFecha.setText(miMesaVO.getMesafecha());		
+			txtSituacion.setText(miMesaVO.getMesasituacion());
+			codMesa=miMesaVO.getCodmesa();
+			listarAlumnosCondicionales(miMesaVO);
+		}
+		
+		private void listarAlumnosCondicionales(MesaVO miMesaVO) {
+			modeloLista.clear();
+			// saco todas las correlativas
+			//MateriaDAO miMateriaDAO = new MateriaDAO();
+			MateriaCorrelativaDAO miCorrelativaDAO = new MateriaCorrelativaDAO();
+			String codMateria = miMesaVO.getCodmat();
+			String situacion = miMesaVO.getMesasituacion();
+			String situ="";
+			if (situacion.equals("regulares"))
+				situ="A FINAL";
+			else
+				situ="Recursa";
+			//String vecCorr[] = miMateriaDAO.obtenerCorrelativas(codMateria);
+			// después borrar el método
+			String vecCorr[] = miCorrelativaDAO.obtenerCorrelativas(codMateria);
+			String turno = miMesaVO.getTurno();
+			
+			AlumnomateriaDAO miAlumnoMateriaDAO = new AlumnomateriaDAO();	
+		
+			miAlumnoMateriaDAO.buscarAlumnosCondicionalesParaMesa(modeloLista,codMateria,vecCorr,situ,turno);
+			
+			listaAlFinal.setModel(modeloLista);
+			
+		}
+		
+	}
+

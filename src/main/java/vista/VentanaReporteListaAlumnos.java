@@ -8,31 +8,32 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 
 import com.toedter.calendar.JYearChooser;
 
 import controlador.Coordinador;
+import modelo.Conexion;
 import modelo.MateriaDAO;
 
-import javax.swing.border.TitledBorder;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
 import java.awt.Color;
-import javax.swing.border.MatteBorder;
 import javax.swing.border.SoftBevelBorder;
-import javax.swing.UIManager;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.util.Calendar;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
 
 public class VentanaReporteListaAlumnos extends JFrame {
 
@@ -45,6 +46,9 @@ public class VentanaReporteListaAlumnos extends JFrame {
 	private JList<String> listaImprime;
 	private DefaultListModel<String> modeloImprime;
 	private JYearChooser selectorAnio;
+	private JComboBox<String> cbPlan;
+	static DefaultComboBoxModel<String> modeloComboPlan;
+	private boolean primeraCarga = false; // Bandera para determinar si es la primera carga del cbPlan
 
 	/**
 	 * Launch the application.
@@ -81,11 +85,35 @@ public class VentanaReporteListaAlumnos extends JFrame {
 		JLabel lblAoDeCursada = new JLabel("Año de cursada:");
 		panelNorte.add(lblAoDeCursada);
 		
-		//Calendar cal = Calendar.getInstance();
-		//int anioActual = cal.get(Calendar.YEAR);
-		
 		selectorAnio = new JYearChooser();
 		panelNorte.add(selectorAnio);
+		
+		JLabel lblNewLabel_1 = new JLabel("                           ");
+		panelNorte.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel = new JLabel("Plan:");
+		panelNorte.add(lblNewLabel);
+		
+		cbPlan = new JComboBox<String>();
+		cbPlan.setEditable(false);
+		cbPlan.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				//mostrarTodasLasMaterias();
+				//elige un plan y cambia el combo de las materias
+				if (e.getStateChange()==ItemEvent.SELECTED) {
+					if (!primeraCarga) {
+						primeraCarga=true;				
+					} else {
+						mostrarTodasLasMaterias();
+					}		
+				}
+			}
+		});
+		cbPlan.setEditable(false);
+		modeloComboPlan = new DefaultComboBoxModel<String>();
+		cbPlan.setModel(modeloComboPlan);
+		cargaComboPlan();
+		panelNorte.add(cbPlan);
 		
 		JPanel panelCentro = new JPanel();
 		contentPane.add(panelCentro, BorderLayout.CENTER);
@@ -144,6 +172,7 @@ public class VentanaReporteListaAlumnos extends JFrame {
 		JButton btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				dispose();
 			}
 		});
 		panelSur.add(btnCancelar);
@@ -165,7 +194,7 @@ public class VentanaReporteListaAlumnos extends JFrame {
 
 	protected void pasarMateria() {
 		List<String> seleccion =listaTotal.getSelectedValuesList();
-		Iterator i=seleccion.iterator();
+		Iterator<String> i=seleccion.iterator();
 		int a =0;
 		while (i.hasNext()){
 			modeloImprime.addElement((String) i.next());
@@ -177,15 +206,36 @@ public class VentanaReporteListaAlumnos extends JFrame {
 	}
 	
 	public void mostrarTodasLasMaterias() {
+		String plan=cbPlan.getSelectedItem().toString();
 		modeloTotal.clear();
 		modeloImprime.clear();
 		MateriaDAO miMateriaDAO = new MateriaDAO();
-		miMateriaDAO.cargarTodasLasMaterias(modeloTotal);
+		miMateriaDAO.cargarTodasLasMaterias(modeloTotal,plan);
 		listaTotal.setModel(modeloTotal);
 	}
 
 
 	public void setMiCoordinador(Coordinador miCoordinador) {
 		this.miCoordinador = miCoordinador;
+	}
+	
+	private void cargaComboPlan() {
+		// Esto es para que al crear el formulario se cargue el combobox de planes de estudio
+				try{
+					Conexion conex = new Conexion();
+					ResultSet resMat = null;
+					Statement estatutoMat = conex.getConnection().createStatement();
+					resMat = estatutoMat.executeQuery("SELECT distinct plan from basegada.materia order by plan desc");
+					
+					while (resMat.next()){
+						
+						modeloComboPlan.addElement((String) resMat.getObject(1));
+					}
+					resMat.close();
+					estatutoMat.close();
+					conex.desconectar();
+				}		catch (SQLException e){
+							JOptionPane.showMessageDialog(null, "Error al consultar materias","Error",JOptionPane.ERROR_MESSAGE);
+				}
 	}
 }

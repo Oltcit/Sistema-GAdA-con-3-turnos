@@ -62,8 +62,20 @@ public class VentanaReportes extends JFrame {
 		JButton btnAnalticos = new JButton("Analíticos");
 		btnAnalticos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int dni =Integer.valueOf(JOptionPane.showInputDialog("Ingrese el Dni: "));
-				miCoordinador.crearReporteAnalitico(dni);
+				String opcion=JOptionPane.showInputDialog("Ingrese el Dni: ");
+				//si el usuario no hizo clic en cancelar
+				if (opcion!=null) {
+					//tratar de convertir String a entero pero validar que este bien ingresado
+					try {
+						int dni=Integer.valueOf(opcion);
+						miCoordinador.crearReporteAnalitico(dni);
+					} catch (NumberFormatException e) {
+						JOptionPane.showMessageDialog(null, "Debe ingresar sólo números", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				
+				
 			}
 		});
 		btnAnalticos.setBounds(137, 81, 160, 23);

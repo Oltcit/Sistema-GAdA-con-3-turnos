@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
 import java.sql.Statement;
 
 import javax.swing.DefaultComboBoxModel;
@@ -264,10 +265,18 @@ public class VentanaMateria extends JFrame {
 					resMat.close();
 					estatutoMat.close();
 					conex.desconectar();
-				}		catch (SQLException e){
+				}	
+				catch (SQLException e){
+					e.printStackTrace();
 							JOptionPane.showMessageDialog(null, "Error al consultar materias","Error",JOptionPane.ERROR_MESSAGE);
 				}
-		
+				/*catch (SQLException e) {
+				    if (e instanceof SQLNonTransientConnectionException) {
+				        JOptionPane.showMessageDialog(null, "No se inició el servidor MySQL", "Error", JOptionPane.ERROR_MESSAGE);
+				    } else {
+				        JOptionPane.showMessageDialog(null, "Error al consultar materias", "Error", JOptionPane.ERROR_MESSAGE);
+				    }
+				}*/
 		JLabel lblMdulos = new JLabel("Módulos:");
 		lblMdulos.setHorizontalAlignment(SwingConstants.RIGHT);
 		GridBagConstraints gbc_lblMdulos = new GridBagConstraints();
@@ -386,6 +395,7 @@ public class VentanaMateria extends JFrame {
 		btnReporte.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String plan=JOptionPane.showInputDialog("Ingrese el Plan de estudios");
+				if (plan!=null)
 				miCoordinador.crearReporteMaterias(plan);
 			}
 		});

@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RepoAnalitico" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="91335d27-839f-464f-935e-9bb19f56b0d2">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapMesaExamen"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapBaseGada"/>
 	<parameter name="ParamDni" class="java.lang.Integer"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT 
-	mesaexamen.alumno.alapynom,
-	mesaexamen.alumnomateria.notafinal,
-	mesaexamen.materia.matnom,
-	mesaexamen.alumnomateria.libro,
-	mesaexamen.alumnomateria.folio,
-	mesaexamen.alumnomateria.fecha,
-	mesaexamen.alumnomateria.situacion
-FROM mesaexamen.alumnomateria
-	INNER JOIN mesaexamen.alumno ON 
-	 mesaexamen.alumnomateria.aldni2 = mesaexamen.alumno.aldni 
-	INNER JOIN mesaexamen.materia ON 
-	 mesaexamen.alumnomateria.codmat2 = mesaexamen.materia.codmat 
+		<![CDATA[SELECT basegada.alumno.alapynom,
+	basegada.alumnomateria.notafinal,
+	basegada.materia.matnom,
+	basegada.alumnomateria.libro,
+	basegada.alumnomateria.folio,
+	basegada.alumnomateria.fecha,
+	basegada.alumnomateria.situacion
+FROM basegada.alumnomateria
+	INNER JOIN basegada.alumno ON 
+	 basegada.alumnomateria.aldni2 = basegada.alumno.aldni 
+	INNER JOIN basegada.materia ON 
+	 basegada.alumnomateria.codmat2 = basegada.materia.codmat 
 WHERE 
-	 mesaexamen.alumnomateria.aldni2 = $P{ParamDni} 
-	 AND mesaexamen.alumnomateria.notafinal >= 4 
-ORDER BY mesaexamen.materia.anio,
-	mesaexamen.materia.matnom]]>
+	 basegada.alumnomateria.aldni2 = $P{ParamDni} 
+	 AND basegada.alumnomateria.notafinal >= 4 
+ORDER BY basegada.materia.anio DESC,
+	basegada.materia.matnom DESC]]>
 	</queryString>
 	<field name="alapynom" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="alapynom"/>
@@ -63,7 +62,7 @@ ORDER BY mesaexamen.materia.anio,
 		<band height="65" splitType="Stretch">
 			<image>
 				<reportElement x="0" y="0" width="50" height="50" uuid="32540375-d803-4ca9-81a2-314caddd20b6"/>
-				<imageExpression><![CDATA["D:/eclipse Mars win32/Prácticas/Base de Datos/pruebaMesaExamen/src/main/java/imagenes/Is44 logo.JPG"]]></imageExpression>
+				<imageExpression><![CDATA["/src/main/java/imagenes/Is44 logo.JPG"]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="90" y="0" width="230" height="21" uuid="e1d2fb12-dcc3-4a24-acea-5fd447237f25"/>

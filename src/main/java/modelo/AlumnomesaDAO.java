@@ -15,14 +15,18 @@ import javax.swing.table.TableModel;
 
 public class AlumnomesaDAO {
 
-	public void altaRegistroAlumnoMesa(int numAi, int doc, int codMesa) {
-		Conexion conex= new Conexion();
-		
-		try {
-			Statement estatuto = conex.getConnection().createStatement();
+	public void altaRegistroAlumnoMesa(int numAi, int doc, int codMesa, boolean condicional) {
 			
-			estatuto.executeUpdate("INSERT INTO alumnomesa (`codalumesa`,`aldni`,`codmesa`) VALUES ('"+numAi+"','"+doc+"', '"+codMesa+"')");
-
+		try {
+			Conexion conex= new Conexion();
+			Statement estatuto = conex.getConnection().createStatement();
+		
+			if (condicional) {			
+				estatuto.executeUpdate("INSERT INTO alumnomesa (`codalumesa`,`aldni`,`condicionado`,`codmesa`) VALUES ('"+numAi+"','"+doc+"', '*', '"+codMesa+"')");
+			}else {				
+				estatuto.executeUpdate("INSERT INTO alumnomesa (`codalumesa`,`aldni`,`codmesa`) VALUES ('"+numAi+"','"+doc+"', '"+codMesa+"')");
+			}
+			
 			estatuto.close();
 		    conex.desconectar();
 			
@@ -130,8 +134,9 @@ public class AlumnomesaDAO {
 	}
 
 	public void buscarAlumnosMesaQuitar(DefaultListModel<String> modeloActa, int codMesa) {
-		Conexion conex = new Conexion();
+		
 		try{
+			Conexion conex = new Conexion();
 			String consulta = "SELECT alumno.aldni,alapynom FROM alumnomesa INNER JOIN alumno"
 					+ " ON alumnomesa.aldni=alumno.aldni where codmesa=? order by alapynom ";
 	
@@ -169,5 +174,31 @@ public class AlumnomesaDAO {
 			JOptionPane.showMessageDialog(null, "No se Elimino");
 		}	
 		
+	}
+
+	public int contarAnotadosMesa(int codigoMesa) {
+		int cantidadAnotados = 0; // Variable para almacenar la cantidad de anotados
+		try {
+			Conexion conex = new Conexion();
+			String consulta = "SELECT alumnomesa.codmesa,COUNT(*) FROM alumnomesa "
+					+ "where codmesa=? ";
+	
+			PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
+			estatuto.setInt(1,codigoMesa);
+			ResultSet res = estatuto.executeQuery();
+			
+			 // Verificar si hay resultados
+	        if (res.next()) {
+	            cantidadAnotados = res.getInt(2); // Obtener el valor del contador (segunda columna)
+	        }
+			
+			res.close();
+			estatuto.close();
+			conex.desconectar();
+		} catch (SQLException e) {
+		 System.out.println(e.getMessage());
+		JOptionPane.showMessageDialog(null, "No se encontró");
+	}
+		return cantidadAnotados;
 	}
 	}

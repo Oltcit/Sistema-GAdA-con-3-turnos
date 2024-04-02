@@ -27,6 +27,7 @@ public class Reportes {
 	private String rutaReporte= "C:\\Colegios 2022\\Algoritmos III\\Sistema GAdA GitHub\\Repo Git\\Sistema GAdA v1.4"
 			+ " con 3 turnos\\src\\main\\java\\reportes\\";
 	//C:\Colegios 2022\Algoritmos III\Sistema GAdA GitHub\Repo Git\Sistema GAdA v1.4 con 3 turnos\src\main\java\reportes
+	
 	public void createReport(String loc){
 		Conexion conex= new Conexion();
 		Connection con;
@@ -34,7 +35,16 @@ public class Reportes {
 		
 		Map<String,Object> parametros = new HashMap<>();
 		parametros.put("ParamLocalidad", new String(loc));
-		parametros.put("ParamDoc", new Boolean(true));
+		/*
+		 * En Java, la forma de crear instancias de objetos Boolean utilizando el constructor
+		 *  new Boolean(true) se considera obsoleta y ha sido marcada como deprecada. En lugar 
+		 *  de eso, se recomienda utilizar la clase estática Boolean.valueOf(boolean) para obtener
+		 *   instancias de Boolean. Este enfoque es más eficiente en términos de memoria,
+		 *    ya que Boolean.valueOf(boolean) utiliza un caché interno para reutilizar instancias 
+		 *    existentes cuando sea posible.
+		 */
+		//parametros.put("ParamDoc", new Boolean(true));
+		parametros.put("ParamDoc", Boolean.valueOf(true));
 		
 		try {
 			report = (JasperReport) JRLoader.loadObjectFromFile(rutaReporte+"ReporteAlumnos.jasper");
@@ -138,7 +148,8 @@ public class Reportes {
 					
 					Map<String,Object> parametros = new HashMap<>();
 					parametros.put("ParamCodMat", new String(codMat));
-					parametros.put("ParamAnioCursada", new Integer(anioCursada));
+					//parametros.put("ParamAnioCursada", new Integer(anioCursada));
+					parametros.put("ParamAnioCursada", Integer.valueOf(anioCursada));
 					
 					try {
 						report = (JasperReport) JRLoader.loadObjectFromFile(rutaReporte+"RepoListaAlumnos.jasper");
@@ -177,7 +188,7 @@ public class Reportes {
 					
 					Map<String,Object> parametros = new HashMap<>();
 					parametros.put("ParamCodMat", new String(codMat));
-					parametros.put("ParamAnioCursada", new Integer(anioCursada));
+					parametros.put("ParamAnioCursada", Integer.valueOf(anioCursada));
 					
 					try {
 						report = (JasperReport) JRLoader.loadObjectFromFile(rutaReporte+"RepoPlanillaParciales.jasper");
@@ -199,10 +210,11 @@ public class Reportes {
 		con=conex.getConnection();
 		
 		Map<String,Object> parametros = new HashMap<>();
-		parametros.put("ParamDni", new Integer(dni));
+		//parametros.put("ParamDni", new Integer(dni));
+		parametros.put("ParamDni", Integer.valueOf(dni));
 		
 		try {
-			report = (JasperReport) JRLoader.loadObjectFromFile(rutaReporte+"RepoAnalitico.jasper");
+			report = (JasperReport) JRLoader.loadObjectFromFile(rutaReporte+"RepoAnaliticoBaseGada.jasper");
 			reportFilled = JasperFillManager.fillReport(report, parametros,con);
 			showViewer();
 		} catch (JRException e) {			
@@ -215,9 +227,9 @@ public class Reportes {
 		con=conex.getConnection();
 		
 		Map<String,Object> parametros = new HashMap<>();
-		parametros.put("ParamAnioDesde", new Integer(anioDesde));
-		parametros.put("ParamAnioHasta", new Integer(anioHasta));
-		parametros.put("ParamFechaCursada", new Integer(anioActual));
+		parametros.put("ParamAnioDesde", Integer.valueOf(anioDesde));
+		parametros.put("ParamAnioHasta", Integer.valueOf(anioHasta));
+		parametros.put("ParamFechaCursada", Integer.valueOf(anioActual));
 		
 		try {
 			report = (JasperReport) JRLoader.loadObjectFromFile(rutaReporte+"RepoPromedioTecnicatura.jasper");

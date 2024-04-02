@@ -368,6 +368,9 @@ public class Coordinador {
 	public void crearReportePlanillasParciales(DefaultListModel<String> modeloImprime, int anioCursada) {
 		miReporte.reportePlanillasParciales(modeloImprime, anioCursada);
 	}
+	public void pasarDatosAlumnoCondicionalMesa(MesaVO miMesaVO) {		
+			miVentanaAlumnoMesa.muestraMesaCondicional(miMesaVO);
+	}
 	
 	
 	

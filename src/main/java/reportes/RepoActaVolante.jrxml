@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RepoActaVolante" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1bbc01c9-897d-4c3a-9de8-fd5e2d59973e">
 	<property name="com.jaspersoft.studio.data.sql.tables">
 		<![CDATA[bWVzYWV4YW1lbi5hbHVtbm8gLDE2NCwxNSxjZmIyYzQ4NS1kNDFiLTQ1ZWItODI5Yi01NGJjYjli
 ZTk4YTY7bWVzYWV4YW1lbi5hbHVtbm9tZXNhICwxNSwyNDEsZjhiNDUyMWQtMmYxMC00NThlLWE3
 ZGYtODk0NGFhMGQ1YWI5O21lc2FleGFtZW4ubWVzYSAsMTY0LDMzOSxlYWE4MGZhZS01YzEwLTRl
-NjgtODUwZC0wNmQwMTU0ZThlZDk7
-]]>
+NjgtODUwZC0wNmQwMTU0ZThlZDk7]]>
 	</property>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapGada"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="399"/>
@@ -43,8 +42,7 @@ NjgtODUwZC0wNmQwMTU0ZThlZDk7
 		<property name="com.jaspersoft.studio.data.sql.tables">
 			<![CDATA[bWVzYWV4YW1lbi5hbHVtbm8gLDE2NCwxNSw5MmFmN2MwYi0zMmZjLTQ0M2YtYjE0OC0zOTZkOWM2
 YWI4ZGY7bWVzYWV4YW1lbi5hbHVtbm9tZXNhICwxNSw5Miw0ODJmMTMyMS0yMTUyLTQxNzEtYTJi
-Ny05YTc4MGYwMGE4MWU7
-]]>
+Ny05YTc4MGYwMGE4MWU7]]>
 		</property>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapGada"/>
 		<parameter name="ParamCodMesa" class="java.lang.Integer"/>
@@ -200,7 +198,7 @@ WHERE
 			</textField>
 			<image>
 				<reportElement x="0" y="0" width="80" height="69" uuid="404dab2a-3279-4d63-b667-f5d4ffa1cee9"/>
-				<imageExpression><![CDATA["D:/eclipse Mars win32/Prácticas/Base de Datos/pruebaMesaExamen/src/main/java/imagenes/Is44 logo.JPG"]]></imageExpression>
+				<imageExpression><![CDATA["C:/Colegios 2022/Algoritmos III/Sistema GAdA v1.4 con 3 turnos/src/main/java/imagenes/Is44 logo.JPG"]]></imageExpression>
 			</image>
 		</band>
 	</columnHeader>

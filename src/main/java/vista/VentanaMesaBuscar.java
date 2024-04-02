@@ -92,6 +92,9 @@ public class VentanaMesaBuscar extends JFrame {
 					miCoordinador.pasarDatosActaVolante(pasarDatosMesa(e)); // pasa a VentanaAlumnoMesa para hacer reporte Acta volante
 				if (ventana==7)
 					miCoordinador.pasarDatosAlumnoMesaQuitar(pasarDatosMesa(e)); //pasa los datos a VentanaAlumnoMesa para quitar alumnos de una mesa
+				if (ventana==8)
+					miCoordinador.pasarDatosAlumnoCondicionalMesa(pasarDatosMesa(e)); 
+				// pasa los datos a VentanaAlumnoMesa para agregar los alumnos condicionales
 			}
 		});
 		tablaMesa.setModel(modeloMesa);

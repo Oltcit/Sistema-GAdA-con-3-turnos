@@ -13,7 +13,7 @@ public class Conexion {
    static String password = "Admin";
  
    //String url= "jdbc:mysql://localhost:3306/mesaexamen?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-   String url= "jdbc:mysql://localhost:3306/basegada?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=America/Argentina/Buenos_Aires";
+   String url= "jdbc:mysql://localhost:3306/basegada?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=America/Argentina/Buenos_Aires";
    Connection conn = null;
 
    /** Constructor de DbConnection */

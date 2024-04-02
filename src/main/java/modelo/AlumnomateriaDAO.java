@@ -18,7 +18,7 @@ public class AlumnomateriaDAO {
 		Conexion conex= new Conexion();
 		AlumnomateriaVO miAlumnoMateria = new AlumnomateriaVO();
 		boolean existe=false;
-		System.out.println("Llegue al dao hoy dni "+dni+" codigo materia "+cod);
+		
 		try {
 			String consulta = "SELECT * FROM alumnomateria where aldni2 = ? and codmat2 = ? ";
 			PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
@@ -26,17 +26,13 @@ public class AlumnomateriaDAO {
 			estatuto.setString(2,cod);
 			ResultSet res = estatuto.executeQuery();
 			
-			System.out.println("entre al try de hoy");
 			while(res.next()){
-				
-				System.out.println("entre al while de hoy");
 				
 				existe=true;
 				
 				//se debe escribir el nombre de la columna de la tabla
 				miAlumnoMateria.setAldni2(res.getInt("aldni2"));
 				miAlumnoMateria.setCodalumnomateria(Integer.parseInt(res.getString("codalumnomateria")));
-				//miAlumnoMateria.setAldni2(Integer.parseInt(res.getString("aldni2")));
 				miAlumnoMateria.setCodmat2(res.getString("codmat2"));
 				miAlumnoMateria.setFechaDeCursada(Integer.parseInt(res.getString("fechadecursada")));
 				miAlumnoMateria.setParcial1(res.getString("parcial1"));
@@ -55,8 +51,6 @@ public class AlumnomateriaDAO {
 			
 				miAlumnoMateria.setFecha(res.getString("fecha"));
 			  	miAlumnoMateria.setTurno(res.getString("turno"));
-				//System.out.println("Turno  "+miAlumnoMateria.getTurno());
-				System.out.println("situacion: "+miAlumnoMateria.getSituacion());
 				
 			 }
 			res.close();
@@ -70,16 +64,14 @@ public class AlumnomateriaDAO {
 				System.out.println("Entre al catch");
 					e.printStackTrace();
 			}
-		finally{
+		//finally{
 			if (existe) {
-				System.out.println("entre al finally existe");
 				return miAlumnoMateria;
 			}
 			else {
-				System.out.println("entre al finallly no existe");
 				return null;				
 			}
-		}
+	//	}
 	}
  
 	public void cargarComboMateriasAlumno(DefaultComboBoxModel<String> modeloComboMateria, int dniAlum) {
@@ -91,14 +83,10 @@ public class AlumnomateriaDAO {
 			estatutoMatAl.setInt(1,dniAlum);
 			ResultSet resMatAl = estatutoMatAl.executeQuery();
 			
-
-			System.out.println("Entre al try de cargarComboMateriasAlumnno en AlumnoMateriaDAO dni: "+dniAlum);
-			
 			modeloComboMateria.removeAllElements();
 			while (resMatAl.next()){
-				System.out.println("Entre al while de AlumnoMateriaDAO cargarComboMateriasAlumno dni: "+dniAlum);
-				modeloComboMateria.addElement(resMatAl.getString("codmat2"));
-				
+	
+				modeloComboMateria.addElement(resMatAl.getString("codmat2"));				
 			}
 			resMatAl.close();
 			estatutoMatAl.close();
@@ -136,7 +124,7 @@ public class AlumnomateriaDAO {
 				JOptionPane.showMessageDialog(null, "No se Registro");
 			}
 			}else{
-				System.out.println("fecha vacia");
+				//fecha vacia
 				try {
 					matNueva=true;
 					
@@ -168,12 +156,11 @@ public class AlumnomateriaDAO {
 			Conexion conex= new Conexion();
 			
             String fecha=miAlumnomateria.getFecha();
-            System.out.println("la nota final es "+miAlumnomateria.getNotafinal());
+          
 			if (fecha!=null){
 			
 			try {
-				System.out.println("entre al update con fecha");
-				System.out.println("la nota final es "+miAlumnomateria.getNotafinal());
+				
 				String consulta="UPDATE alumnomateria SET parcial1= ? ,parcial2 = ? , recup1=? , recup2=? , recup3= ?, situacion=? ,"
 						+ "notafinal= ?,libro= ?,folio= ?,fecha= ?,turno= ? WHERE aldni2= ? and codmat2=? ";
 				PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
@@ -204,8 +191,7 @@ public class AlumnomateriaDAO {
 			
 			}else{
 				try{
-					System.out.println("entre al update sin fecha");
-					System.out.println("codalumnomateria"+miAlumnomateria.getCodalumnomateria());
+					
 				String consulta="UPDATE alumnomateria SET parcial1= ? ,parcial2 = ? , recup1=? , recup2=? , recup3= ?, situacion=?"
 						+ ",fechadecursada=?,turno= ?  WHERE aldni2= ? and codmat2=?";
 				PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
@@ -249,14 +235,14 @@ public class AlumnomateriaDAO {
 		}		
 	}
 
-	public void buscarAlumnosParaMesa(DefaultListModel<String> modelo, String codMateria, String[] vecCorr, String situacion) {
+	public void buscarAlumnosParaMesa(DefaultListModel<String> modelo, String codMateria, String[] vecCorr, String situacion, String turno) {
 	
 		try{
 			Conexion conex = new Conexion();
 		
 			String encabezado= "SELECT am.fechadecursada,am.situacion,am.aldni2,a.alapynom"
 					+ " from alumnomateria AS am, alumno AS a where am.aldni2=a.aldni and codmat2= ? "
-					+ "and situacion=? and (fechadecursada+5) >= year(curdate()) and notafinal is null ";
+					+ "and situacion=? and turno=? and (fechadecursada+5) >= year(curdate()) and notafinal is null ";
 		String repite1 = " and aldni in (SELECT aldni2 from alumnomateria where codmat2='";
 		String repite2 ="' and notafinal>='4'";
 		String unico =" and am.aldni2 not in(select alumnomesa.aldni from alumnomesa,mesa where "
@@ -279,7 +265,8 @@ public class AlumnomateriaDAO {
 	PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
 	estatuto.setString(1,codMateria);
 	estatuto.setString(2,situacion);
-	estatuto.setString(3, codMateria);
+	estatuto.setString(3, turno);
+	estatuto.setString(4, codMateria);
 	
 	/*if (vecCorr.length > 0){
 	estatuto.setString(3, vecCorr[vecCorr.length-1]);
@@ -376,5 +363,71 @@ public class AlumnomateriaDAO {
 		if (grabo)
 			JOptionPane.showMessageDialog(null, "Se guardó correctamente","Información",JOptionPane.INFORMATION_MESSAGE);
 	}
+	
+	public void buscarAlumnosCondicionalesParaMesa(DefaultListModel<String> modelo, String codMateria,
+			String[] vecCorr, String situacion, String turno) {
+		try{
+			Conexion conex = new Conexion();
+			
+		String encabezado1="SELECT am.fechadecursada,am.situacion,am.aldni2,a.alapynom"
+					+ " from alumnomateria AS am, alumno AS a where am.aldni2=a.aldni and codmat2= ? "
+					+ "and situacion=? and turno=? and (fechadecursada+5) >= year(curdate()) and notafinal is null "
+					+ "and am.aldni2 not in(SELECT ame.aldni from alumnomesa AS ame, mesa AS me "
+					+ "where ame.codmesa=me.codmesa and me.codmat= ? and ame.mesanota is null) "
+					+ "and am.aldni2 not in (";
+			
+		String encabezado= "SELECT am.aldni2"
+				+ " from alumnomateria AS am, alumno AS a where am.aldni2=a.aldni and codmat2= ? "
+				+ "and situacion=? and (fechadecursada+5) >= year(curdate()) and notafinal is null ";
+		
+		String repite1 = " and aldni in (SELECT aldni2 from alumnomateria where codmat2='";
+		String repite2 ="' and notafinal>='4'";
+		
+		String unico =" and am.aldni2 not in(select alumnomesa.aldni from alumnomesa,mesa where "
+					+ "alumnomesa.codmesa=mesa.codmesa and mesa.codmat= ? and mesanota is null)";
+		String parentesis = ")";
+		String pie = " order by alapynom";
+		
+		String consulta=encabezado1+encabezado;
+		
+		for (int i=0;i<(vecCorr.length);i++){
+			consulta+=repite1+vecCorr[i]+repite2;
+		}
+		consulta+= unico;
+		for (int i=0;i<vecCorr.length;i++){
+			consulta+= parentesis;
+		}
+		consulta+=")";
+		consulta+= pie;
+		
+		//System.out.println(consulta); //muestra la consulta armada por consola
+		
+		
+	PreparedStatement estatuto = conex.getConnection().prepareStatement(consulta);
+	estatuto.setString(1,codMateria);
+	estatuto.setString(2, situacion);
+	estatuto.setString(3, turno);
+	estatuto.setString(4,codMateria);
+	estatuto.setString(5, codMateria);
+	estatuto.setString(6, situacion);
+	estatuto.setString(7, codMateria);
+	
+	ResultSet res = estatuto.executeQuery();
+			
+	while (res.next()){
+		String cadena="";
+		for (int i=0; i<4;i++)
+			cadena+=res.getObject(i+1)+"  ";
+		modelo.addElement(cadena+" * ");
+	}	
+	res.close();
+	estatuto.close();
+	conex.desconectar();
+}		catch (SQLException e){
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error al consultar alumnos condicionales","Error",JOptionPane.ERROR_MESSAGE);
+}				
+	}
+	
 	}	
 

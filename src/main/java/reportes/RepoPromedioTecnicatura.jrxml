@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RepoPromedioTecnicatura" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="296c6d1f-2a3f-4841-b858-805f7428bee9">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="327"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="664"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapMesaExamen"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AdapBaseGada"/>
 	<parameter name="ParamAnioDesde" class="java.lang.Integer"/>
 	<parameter name="ParamAnioHasta" class="java.lang.Integer"/>
 	<parameter name="ParamFechaCursada" class="java.lang.Integer"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT mesaexamen.alumno.aldni,
-	mesaexamen.alumno.alapynom,
+		<![CDATA[SELECT basegada.alumno.aldni,
+	basegada.alumno.alapynom,
 	avg( notafinal),
 	count(*)
-FROM mesaexamen.alumnomateria
-	INNER JOIN mesaexamen.alumno ON 
-	 mesaexamen.alumnomateria.aldni2 = mesaexamen.alumno.aldni 
-	INNER JOIN mesaexamen.materia ON 
-	 mesaexamen.alumnomateria.codmat2 = mesaexamen.materia.codmat 
+FROM basegada.alumnomateria
+	INNER JOIN basegada.alumno ON 
+	 basegada.alumnomateria.aldni2 = basegada.alumno.aldni 
+	INNER JOIN basegada.materia ON 
+	 basegada.alumnomateria.codmat2 = basegada.materia.codmat 
 WHERE 
-	 mesaexamen.alumnomateria.notafinal >= 4 
-	 AND mesaexamen.alumnomateria.fechadecursada BETWEEN $P{ParamAnioDesde} AND $P{ParamAnioHasta} 
-	 AND mesaexamen.materia.anio BETWEEN '1' AND '2' 
-	 AND mesaexamen.alumnomateria.codmat2 NOT IN (SELECT materia.codmat
+	 basegada.alumnomateria.notafinal >= 4 
+	 AND basegada.alumnomateria.fechadecursada BETWEEN $P{ParamAnioDesde} AND $P{ParamAnioHasta} 
+	 AND basegada.materia.anio BETWEEN '1' AND '2' 
+	 AND basegada.alumnomateria.codmat2 NOT IN (SELECT materia.codmat
 FROM materia
-	inner join mesaexamen.alumnomateria ON 
-	 materia.codmat = mesaexamen.alumnomateria.codmat2 
+	inner join basegada.alumnomateria ON 
+	 materia.codmat = basegada.alumnomateria.codmat2 
 WHERE 
 	 materia.anio = '3' 
-	 AND mesaexamen.alumnomateria.fechadecursada = $P{ParamFechaCursada} )
-GROUP BY mesaexamen.alumno.aldni]]>
+	 AND basegada.alumnomateria.fechadecursada = $P{ParamFechaCursada} )
+GROUP BY basegada.alumno.aldni]]>
 	</queryString>
 	<field name="aldni" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="aldni"/>
@@ -57,7 +57,7 @@ GROUP BY mesaexamen.alumno.aldni]]>
 		<band height="70" splitType="Stretch">
 			<image>
 				<reportElement x="0" y="0" width="70" height="70" uuid="f75f37bb-4755-4c53-b4e6-9e8db4bf9506"/>
-				<imageExpression><![CDATA["D:/eclipse Mars win32/Prácticas/Base de Datos/pruebaMesaExamen/src/main/java/imagenes/Is44 logo.JPG"]]></imageExpression>
+				<imageExpression><![CDATA["C:/Colegios 2022/Algoritmos III/Sistema GAdA v1.4 con 3 turnos/src/main/java/imagenes/Is44 logo.JPG"]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="100" y="20" width="220" height="31" uuid="a1e61b99-62a5-4fe5-b905-48d280f8bb2c"/>
